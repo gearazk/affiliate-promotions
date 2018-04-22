@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) exit;
 
 // Include guzzle dependencies
 require_once AFFILIATE_PROMOTIONS_DIR . 'includes/libs/vendor/autoload.php';
-use GuzzleHttp\Client;
+require_once AFFILIATE_PROMOTIONS_DIR . 'includes/admin/ajax-functions.php';
 
 if ( ! class_exists('Affpromos_Settings') ) {
 	
@@ -58,52 +58,88 @@ if ( ! class_exists('Affpromos_Settings') ) {
 			);
 			
 			// SECTION: Quickstart
-			add_settings_section(
-				'affpromos_settings_section_quickstart',
-				__('Quickstart Guide', AFFILIATE_PROMOTIONS_PLUG),
-				array( &$this, 'section_quickstart_render' ),
-				'affpromos_settings'
-			);
+//			add_settings_section(
+//				'affpromos_settings_section_quickstart',
+//				__('Quickstart Guide', AFFILIATE_PROMOTIONS_PLUG),
+//				array( &$this, 'section_quickstart_render' ),
+//				'affpromos_settings'
+//			);
 			
 			
 			// SECTION TWO
 			add_settings_section(
 				'affpromos_settings_section_promotions',
-				__('Promotions', AFFILIATE_PROMOTIONS_PLUG),
-				array( &$this, 'section_two_render' ), // Optional you can output a description for each section
+				__('Sync data settings', AFFILIATE_PROMOTIONS_PLUG),
+				null,
 				'affpromos_settings'
 			);
 			
-			add_settings_field(
-				'affpromos_settings_promotion_aff_token',
-				__('AccessTrade Access Token', AFFILIATE_PROMOTIONS_PLUG),
-				array(&$this, 'promotion_aff_token_at_render'),
-				'affpromos_settings',
-				'affpromos_settings_section_promotions'
-			);
+                add_settings_field(
+                    'affpromos_settings_promotion_aff_token',
+                    __('AccessTrade Access Token', AFFILIATE_PROMOTIONS_PLUG),
+                    array(&$this, 'promotion_aff_token_at_render'),
+                    'affpromos_settings',
+                    'affpromos_settings_section_promotions'
+                );
+                
+                add_settings_field(
+                    'affpromos_settings_promotion_auto_update',
+                    __('Auto Update', AFFILIATE_PROMOTIONS_PLUG),
+                    array(&$this, 'promotion_auto_update_render'),
+                    'affpromos_settings',
+                    'affpromos_settings_section_promotions'
+                );
+                
+                add_settings_field(
+                    'affpromos_settings_promotion_lifetime',
+                    __('Expiration', AFFILIATE_PROMOTIONS_PLUG),
+                    array(&$this, 'promotion_lifetime_render'),
+                    'affpromos_settings',
+                    'affpromos_settings_section_promotions'
+                );
+                add_settings_field(
+                    'affpromos_settings_aff_omit_offer_update',
+                    __('Not update Offers', AFFILIATE_PROMOTIONS_PLUG),
+                    array(&$this, 'promotion_aff_omit_offer_update_render'),
+                    'affpromos_settings',
+                    'affpromos_settings_section_promotions'
+                );
+                add_settings_field(
+                    AFFILIATE_PROMOTIONS_PREFIX.'sync_promotion_fields',
+                    __('Sync Promotions', AFFILIATE_PROMOTIONS_PLUG),
+                    array(&$this, 'sync_promotion_fields_render'),
+                    'affpromos_settings',
+                    'affpromos_settings_section_promotions'
+                );
+                
 			
-			add_settings_field(
-				'affpromos_settings_promotion_auto_update',
-				__('Auto Update', AFFILIATE_PROMOTIONS_PLUG),
-				array(&$this, 'promotion_auto_update_render'),
-				'affpromos_settings',
-				'affpromos_settings_section_promotions'
+			add_settings_section(
+				'affpromos_offer_sync_setting',
+				__('Sync Offers', AFFILIATE_PROMOTIONS_PLUG),
+				null,
+				'affpromos_settings'
 			);
-			
-			add_settings_field(
-				'affpromos_settings_promotion_lifetime',
-				__('Expiration', AFFILIATE_PROMOTIONS_PLUG),
-				array(&$this, 'promotion_lifetime_render'),
-				'affpromos_settings',
-				'affpromos_settings_section_promotions'
-			);
-			add_settings_field(
-				'affpromos_settings_aff_omit_offer_update',
-				__('Not update Offers', AFFILIATE_PROMOTIONS_PLUG),
-				array(&$this, 'promotion_aff_omit_offer_update_render'),
-				'affpromos_settings',
-				'affpromos_settings_section_promotions'
-			);
+                add_settings_field(
+                    AFFILIATE_PROMOTIONS_PREFIX.'offer_limit_field',
+                    __('Offer Limit (<30)', AFFILIATE_PROMOTIONS_PLUG),
+                    array(&$this, 'offer_limit_field_renderer'),
+                    'affpromos_settings',
+                    'affpromos_offer_sync_setting'
+                );
+                add_settings_field(
+                    AFFILIATE_PROMOTIONS_PREFIX.'offer_vendor_field',
+                    __('Vendor', AFFILIATE_PROMOTIONS_PLUG),
+                    array(&$this, 'offer_vendor_field_renderer'),
+                    'affpromos_settings',
+                    'affpromos_offer_sync_setting'
+                );
+                add_settings_field(
+                    AFFILIATE_PROMOTIONS_PREFIX.'offer_cate_field',
+                    __('Category', AFFILIATE_PROMOTIONS_PLUG),
+                    array(&$this, 'offer_category_field_renderer'),
+                    'affpromos_settings',
+                    'affpromos_offer_sync_setting'
+                );
 		}
 		
 		function validate_input_callback( $input ) {
@@ -179,9 +215,50 @@ if ( ! class_exists('Affpromos_Settings') ) {
 			<?php
 		}
 		
+		function offer_limit_field_renderer() {
+			$offer_limit = isset ( $this->options[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_limit'] ) ? $this->options[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_limit'] : 30;
+		    ?>
+            <input type="number" id="<?php echo AFFILIATE_PROMOTIONS_PREFIX.'offer_limit';?>" name="affpromos_settings[<?php echo AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_limit';?>]" value="<?php echo $offer_limit; ?>" />
+            <?php
+			SyncAjax::ajax_sync_offer_trigger_render();
+		}
+		
+		function offer_vendor_field_renderer() {
+		    $vendor_list = get_posts(['post_type'=>AFFILIATE_PROMOTIONS_PREFIX.'vendor','posts_per_page'=>-1]);
+			
+			$selected = ( isset ( $this->options[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_vendor'] ) ) ? $this->options[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_vendor']
+                : '';
+			?>
+            <select id="<?php echo AFFILIATE_PROMOTIONS_PREFIX.'offer_vendor';?>" name="affpromos_settings[<?php echo AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_vendor';?>]">
+                <option value="" <?php selected( $selected, '' ); ?>>(<?php _e('All vendors',AFFILIATE_PROMOTIONS_PLUG) ?>)</option>
+                <?php foreach ( $vendor_list as $vendor) { ?>
+                    <option value="<?php echo $vendor->post_name; ?>" <?php selected( $selected, $vendor->post_name ); ?>><?php echo $vendor->post_name; ?></option>
+				<?php } ?>
+            </select>
+			<?php
+		}
+		
+		function offer_category_field_renderer() {
+			$cate_list = get_terms(['taxonomy'=>AFFILIATE_PROMOTIONS_PREFIX.'category','posts_per_page'=>-1]);
+			
+			$selected = ( isset ( $this->options[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_category'] ) ) ? $this->options[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_category']
+				: '';
+			?>
+            <select id="<?php echo AFFILIATE_PROMOTIONS_PREFIX.'offer_category';?>" name="affpromos_settings[<?php echo AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_category';?>]">
+                <option value="" <?php selected( $selected, '' ); ?>>(<?php _e('All categories',AFFILIATE_PROMOTIONS_PLUG) ?>)</option>
+				<?php foreach ( $cate_list as $cate) { ?>
+                    <option value="<?php echo $cate->slug; ?>" <?php selected( $selected, $cate->slug ); ?>><?php echo $cate->name; ?></option>
+				<?php } ?>
+            </select>
+			<?php
+		}
+		
+		function sync_promotion_fields_render() {
+			SyncAjax::ajax_sync_promotion_trigger_render();
+			
+		}
 		
 		function promotion_aff_token_at_render() {
-			
 			
 			$aff_at_token = isset ( $this->options[AFFILIATE_PROMOTIONS_AT_PREFIX.'token'] ) ? $this->options[AFFILIATE_PROMOTIONS_AT_PREFIX.'token'] : 'XXX';
 			?>
@@ -222,19 +299,15 @@ if ( ! class_exists('Affpromos_Settings') ) {
             <label for="affpromos_settings_aff_omit_offer_update"><?php _e('Will omit Offer when update items (too much will slow down your web)', AFFILIATE_PROMOTIONS_PLUG); ?></label>
 			<?php
 		}
-		// TODO: Dummies
 		
 		function text_field_01_render() {
-			
 			$text = ( ! empty($this->options['text_01'] ) ) ? esc_attr( trim($this->options['text_01'] ) ) : ''
-			
 			?>
             <input type="text" name="affpromos_settings[text_01]" id="affpromos_settings_text_field_01" value="<?php echo esc_attr( trim( $text ) ); ?>" />
 			<?php
 		}
 		
 		function select_field_01_render() {
-			
 			$select_options = array(
 				'0' => __('Please select...', AFFILIATE_PROMOTIONS_PLUG),
 				'1' => __('Option One', AFFILIATE_PROMOTIONS_PLUG),
@@ -254,19 +327,14 @@ if ( ! class_exists('Affpromos_Settings') ) {
 		}
 		
 		function checkbox_field_01_render() {
-			
 			$checked = ( isset ( $this->options['checkbox_01'] ) && $this->options['checkbox_01'] == '1' ) ? 1 : 0;
 			?>
-
             <input type="checkbox" id="affpromos_settings_checkbox_field_01" name="affpromos_settings[checkbox_01]" value="1" <?php echo($checked == 1 ? 'checked' : ''); ?> />
             <label for="affpromos_settings_checkbox_field_01"><?php _e('Activate in order to do some cool stuff.', AFFILIATE_PROMOTIONS_PLUG); ?></label>
 			<?php
 		}
-		
 		function text_field_02_render() {
-			
 			$text = ( ! empty($this->options['text_02'] ) ) ? esc_attr( trim($this->options['text_02'] ) ) : ''
-			
 			?>
             <input type="text" name="affpromos_settings[text_02]" id="affpromos_settings_text_field_02" value="<?php echo esc_attr( trim( $text ) ); ?>" />
 			<?php
@@ -275,23 +343,24 @@ if ( ! class_exists('Affpromos_Settings') ) {
 		function options_page() {
 			?>
             <div class="wrap">
-				<?php screen_icon(); ?>
+				<?php screen_icon();
+				$_get = $_GET;
+				
+				?>
                 <h2><?php _e('Affiliate Promotions', AFFILIATE_PROMOTIONS_PLUG); ?>
-					<?php if( isset($_GET['aff_page']) && $_GET['aff_page'] == 'logs' ) {
-						unset($_GET['action']);
-						unset($_GET['aff_page']);
+					<?php if( isset($_get['aff_page']) && $_get['aff_page'] == 'logs' ) {
+						unset($_get['action']);
+						unset($_get['aff_page']);
 						?>
-                        <a href="<?php echo ("?" . http_build_query($_GET)); ?>" class="button-primary"><?php _e('View Settings', AFFILIATE_PROMOTIONS_PLUG); ?></a>
+                        <a href="<?php echo ("?" . http_build_query($_get)); ?>" class="button-primary"><?php _e('View Settings', AFFILIATE_PROMOTIONS_PLUG); ?></a>
 					
 					<?php } else {
-						unset($_GET['action']);
-						$_GET['aff_page'] = 'logs';
+						unset($_get['action']);
+						$_get['aff_page'] = 'logs';
 						?>
-                        <a href="<?php echo ("?" . http_build_query($_GET)); ?>" class="button-primary"><?php _e('View Logs', AFFILIATE_PROMOTIONS_PLUG); ?></a>
+                        <a href="<?php echo ("?" . http_build_query($_get)); ?>" class="button-primary"><?php _e('View Logs', AFFILIATE_PROMOTIONS_PLUG); ?></a>
 					<?php } ?>
-
                 </h2>
-
 
                 <div id="poststuff">
                     <div id="post-body" class="metabox-holder columns-2">
@@ -299,47 +368,41 @@ if ( ! class_exists('Affpromos_Settings') ) {
                             <div class="meta-box-sortables ui-sortable">
                                 <form action="options.php" method="post">
 									<?php
-									
 									settings_fields('affpromos_settings');
-									if( isset($_GET['aff_page']) && $_GET['aff_page'] == 'logs' ) {
+									if($_GET['aff_page'] == 'logs') {
+										affpromos_logs_sections();
+									}else{
 										affpromos_do_settings_sections('affpromos_settings');
 										?>
                                         <p><?php submit_button('Save Changes', 'button-primary', 'submit', false); ?></p>
 										<?php
-									}else{
-										affpromos_logs_sections();
-										
 									}?>
                                 </form>
                             </div>
-
                         </div>
                         <!-- /#post-body-content -->
-                        <div id="postbox-container-1" class="postbox-container">
-                            <div class="meta-box-sortables">
-								<?php
-								/*
-								 * require_once WP_UDEMY_DIR . 'includes/libs/flowdee_infobox.php';
-								$flowdee_infobox = new Flowdee_Infobox();
-								$flowdee_infobox->set_plugin_slug('udemy');
-								$flowdee_infobox->display();
-								*/
-								?>
-                            </div>
-                            <!-- /.meta-box-sortables -->
-                        </div>
-                        <!-- /.postbox-container -->
                     </div>
                 </div>
             </div>
 			<?php
-			
-			
 		}
-		
-		
 	}
 }
+
+function text_ajax_process_request() {
+	// first check if data is being sent and that it is the data we want
+//	if ( isset( $_POST["post_var"] ) ) {
+		// now set our response var equal to that of the POST var (this will need to be sanitized based on what you're doing with with it)
+		$response = 'nice';
+		// send the response back to the front end
+		echo $response;
+		die();
+//	}
+}
+add_action('wp_ajax_test_response', 'text_ajax_process_request');
+
+
+
 
 $aff_settings = new Affpromos_Settings();
 /*
@@ -359,7 +422,7 @@ function affpromos_do_settings_sections( $page ) {
 		$title = '';
 		
 		if ($section['title'])
-			$title = "<h3 class='handle'>{$section['title']}</h3>\n";
+			$title = "<h3 class='hndle'>{$section['title']}</h3>\n";
 		
 		if ($section['callback'])
 			call_user_func($section['callback'], $section);
@@ -436,469 +499,6 @@ function _defaul($obj,$def){
 	return isset($obj) ? $obj : $def;
 }
 
-function update_category($token='')
-{
-	
-	$opt_category_timestamp = AFFILIATE_PROMOTIONS_PREFIX . 'last_update_category_timestamp';
-	
-	$category_timestamp = get_option($opt_category_timestamp, 0);
-//    $category_timestamp =0;
-	
-	$get_categories_url = AFFILIATE_PROMOTIONS_API."categories/";
-	
-	$get_categories_url = add_query_arg( array(
-		'from'      =>      $category_timestamp,
-		'client'    =>      AFFILIATE_PROMOTIONS_VER,
-		'token'     =>      $token,
-	
-	), $get_categories_url );
-	
-	
-	$client = new Client();
-	
-	try {
-		$response = $client->request('GET', $get_categories_url,['http_errors' => false]);
-	}catch (Exception $e) {
-		return ['error'=>'Connection error ! API Category '];
-	}
-	if ($response->getStatusCode() != 200){
-		$log_data = (object) array(
-			'item'=>'category',
-			'status'=>$response->getStatusCode(),
-			'message'=> $response->getBody()->getContents(),
-		);
-		affpromos_log_action($log_data);
-		return ['error'=>'Connection error ! '.$get_categories_url];
-		
-	}
-	$json_res = json_decode($response->getBody());
-	
-	if ($json_res->status == "success") {
-		foreach ($json_res->data as $data) {
-			
-			$term = term_exists( $data->guid, 'affpromos_category' );
-			
-			if( $term !== 0 && $term !== null)
-				continue;
-			
-			$cate_id = wp_insert_term ($data->name,'affpromos_category',
-				array(
-					'description'=> $data->desc,
-					'slug' => $data->guid,
-				)
-			);
-		}
-		update_option( $opt_category_timestamp, time());
-		$log_data = (object) array(
-			'item'=>'category',
-			'status'=>$json_res->status,
-			'amount'=>count($json_res->data),
-		);
-		affpromos_log_action($log_data);
-		return array(
-			'item_count'=>count($json_res->data)
-		);
-	}else {
-		$log_data = (object) array(
-			'item'=>'category',
-			'status'=>$json_res->status,
-			'message'=>$json_res->message,
-		);
-		affpromos_log_action($log_data);
-		
-		return array(
-			'error' => $json_res->message
-		);
-	}
-}
-
-function update_offer($chuck_num=25, $token=''){
-	$opt_offer_name = AFFILIATE_PROMOTIONS_PREFIX . 'last_update_offer_timestamp';
-	$opt = affpromos_get_options();
-	if (_defaul($opt['aff_omit_offer_update'],'0') == '1'){
-		update_option( $opt_offer_name, time());
-		update_option( AFFILIATE_PROMOTIONS_PREFIX.'last_manualy_update', time());
-		return[ 'item_count'=>0 ];
-	}
-	
-	$offer_timestamp = get_option($opt_offer_name, 0);
-	
-	$get_offers_url = AFFILIATE_PROMOTIONS_API."offers/";
-	
-	$get_offers_url = add_query_arg( array(
-		'from'      =>      $offer_timestamp,
-		'client'    =>      AFFILIATE_PROMOTIONS_VER,
-		'token'     =>      $token,
-	
-	), $get_offers_url );
-	
-	$client = new Client();
-	try {
-		$response = $client->request('GET', $get_offers_url,['http_errors' => false]);
-	}catch (Exception $e) {
-		return ['error'=>'Connection error ! API Offer'];
-	}
-	if ($response->getStatusCode() != 200){
-		$log_data = (object) array(
-			'item'=>'offer',
-			'status'=>$response->getStatusCode(),
-			'message'=> $response->getBody()->getContents(),
-		);
-		affpromos_log_action($log_data);
-		return ['error'=>'Connection error ! '.$get_offers_url];
-		
-	}
-	$json_res = json_decode($response->getBody());
-	
-	if ($json_res->status == "success") {
-		if (count($json_res->data) >= $chuck_num )
-		{
-			$json_res->data = array_slice($json_res->data,0,$chuck_num);
-		}else
-		{
-			update_option( $opt_offer_name, time());
-			update_option( AFFILIATE_PROMOTIONS_PREFIX.'last_manualy_update', time());
-		}
-		foreach ($json_res->data as $data) {
-			insert_new_offer($data);
-		}
-		update_option($opt_offer_name,$json_res->latest_offer+1);
-		$log_data = (object) array(
-			'item'=>'offer',
-			'status'=>$json_res->status,
-			'amount'=>count($json_res->data),
-		);
-		affpromos_log_action($log_data);
-		return array(
-			'item_count'=>count($json_res->data)
-		);
-		
-	}else{
-		// ERROR
-		$log_data = (object) array(
-			'item'=>'offer',
-			'status'=>$json_res->status,
-			'message'=>$json_res->message,
-		);
-		affpromos_log_action($log_data);
-		
-		return array(
-			'error'=>$json_res->message
-		);
-	}
-}
-
-function update_promotions($chuck_num=35,$token='')
-{
-	
-	$opt_promotion_name = AFFILIATE_PROMOTIONS_PREFIX . 'last_update_promos_timestamp';
-	
-	$promotions_timestamp = get_option($opt_promotion_name,0);
-//    $promotions_timestamp = 0;
-	
-	$get_promotions_url = AFFILIATE_PROMOTIONS_API."promos/" ;
-	
-	$get_promotions_url = add_query_arg( array(
-		'from'      =>      $promotions_timestamp,
-		'client'    =>      AFFILIATE_PROMOTIONS_VER,
-		'token'     =>      $token,
-	
-	), $get_promotions_url );
-	
-	
-	$client = new Client();
-	try {
-		$response = $client->request('GET',$get_promotions_url,['http_errors' => false]);
-	}catch (Exception $e) {
-		return ['error'=>'Connection error ! API Promotion'];
-	}
-	if ($response->getStatusCode() != 200){
-		$log_data = (object) array(
-			'item'=>'promotion',
-			'status'=>$response->getStatusCode(),
-			'message'=> $response->getBody()->getContents(),
-		);
-		affpromos_log_action($log_data);
-		return ['error'=>'Connection error ! '.$get_promotions_url];
-	}
-	
-	$json_res  = json_decode($response->getBody());
-	
-	if( $json_res->status=="success" ){
-		if (count($json_res->data) > $chuck_num )
-		{
-			$json_res->data = array_slice($json_res->data,0,$chuck_num);
-		}else
-		{
-			update_option( $opt_promotion_name, time());
-		}
-		foreach ($json_res->data as $data) {
-			insert_new_promotion($data);
-			update_option( $opt_promotion_name, $data->modified_timestamp+1);
-		}
-		
-		$log_data = (object) array(
-			'item'=>'promotion',
-			'status'=>$json_res->status,
-			'amount'=>count($json_res->data),
-		);
-		affpromos_log_action($log_data);
-		
-		return array(
-			'item_count'=>count($json_res->data)
-		);
-	}else{
-		// ERROR
-		$log_data = (object) array(
-			'item'=>'promotion',
-			'status'=>$json_res->status,
-			'message'=>$json_res->message,
-		);
-		affpromos_log_action($log_data);
-		
-		return array(
-			'error'=>$json_res->message
-		);
-	}
-	
-	//-----------------------------
-}
-
-function insert_new_offer($data)
-{
-//    global $wpdb;
-	$client = new Client();
-	
-	$wp_post_offer = array(
-		'post_title'    =>      $data->title,
-		'post_status'   =>      "publish",
-		'post_author'   =>      get_current_user_id(),
-		'post_content'  =>      $data->desc,
-		'post_excerpt'  =>      $data->short_desc,
-		'post_type'     =>      "affpromos_offer",
-	);
-	$post_id = wp_insert_post($wp_post_offer);
-	
-	//-----------Save image from url
-	$image_url = $data->featured_image;
-	$image_name = substr($image_url,strripos($image_url,'/')+1);
-	$upload_dir = wp_upload_dir()['path'].'/'.$image_name;
-	
-	if(! file_exists($upload_dir)) {
-		$file_image = fopen($upload_dir, 'wb');
-		$client->request('GET', $image_url, ['sink' => $file_image]);
-		if(is_resource($file_image))
-			fclose($file_image);
-	}
-	
-	//-----------Save image post as attachment
-	$image_name_save = substr($image_name,0,strripos($image_name,'.'));
-	$wp_attachment_post = array(
-		'post_title'    =>      $image_name_save,
-		'post_status'   =>      "inherit",
-		'post_author'   =>      get_current_user_id(),
-		'ping_status'   =>      "closed",
-		'post_name'     =>      $image_name_save,
-		'post_parent'   =>      $post_id ,
-		'post_type'     =>      "attachment",
-		'post_mime_type'=>      "image/".substr($image_name,(strripos($image_name,'.')+1)),
-		'guid'          =>      wp_upload_dir()['url'].'/'.$image_name,
-	);
-	$image_id = wp_insert_attachment($wp_attachment_post,$upload_dir);
-	
-	//------------Image meta data
-	require_once ABSPATH . 'wp-admin/includes/image.php';
-	$image_meta = wp_generate_attachment_metadata($image_id, $upload_dir);
-	wp_update_attachment_metadata( $image_id,  $image_meta );
-	set_post_thumbnail($post_id,$image_id);
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'offer_image_url',$data->thumbnail);
-	
-	//---- Offer vendor
-	insert_new_vendor($data->vendor);
-	
-	//---- Offer categories
-	if (isset($data->category_id)) {
-		$cate = get_term_by( 'slug', $data->category_id, AFFILIATE_PROMOTIONS_PREFIX . 'category' );
-		wp_set_object_terms( $post_id, $cate->term_id, AFFILIATE_PROMOTIONS_PREFIX . 'category' );
-	}
-	
-	//---- Offer URL
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'offer_url',$data->url);
-	
-	//---- Offer vendor
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'offer_vendor',$vendor_id);
-	
-	//---- Offer specs
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'offer_specs',$data->specs);
-	
-	//---- Offer prices
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'offer_price',$data->price);
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'offer_price_sale',$data->sale_price);
-	
-	//---- Valid time
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'offer_valid_from', intval($data->start_timestamp));
-	
-	if(intval($data->expiration_timestamp) == 99999999999 )
-		$data->expiration_timestamp = time() + 3600*24* 30 ;  // 30 days from now
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'offer_valid_until', intval($data->expiration_timestamp));
-	return $post_id;
-}
-
-function insert_new_vendor($data){
-	global $wpdb;
-	$client = new Client();
-	
-	//--------- Insert vendor
-	
-	// Some vendors may not have all the info so just the name is ok too
-	$full_info = (isset($data->name));
-	
-	$vendor_name = $full_info ? $data->name : $data ;
-	
-	$old_vendors = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE (post_title = '" . $vendor_name . "' and post_type='affpromos_vendor');");
-	
-	if( $old_vendors != null ){
-		return $old_vendors;
-	}
-	$wp_vendor_post = array(
-		'post_title'    =>      $vendor_name,
-		'post_name'     =>      $vendor_name,
-		'post_status'   =>      "publish",
-		'post_author'   =>      get_current_user_id(),
-		'post_excerpt'  =>      $full_info ? $data->desc : '',
-		'post_type'     =>      "affpromos_vendor",
-	);
-	$vendor_id = wp_insert_post($wp_vendor_post);
-	
-	if (!$full_info)
-		return $vendor_id;
-	//-------- Upload logo of vendor
-	$image_url = AFFILIATE_PROMOTIONS_HOST.$data->logo_url;
-	
-	$image_name = substr($image_url,strripos($image_url,'/')+1);
-	$upload_dir = wp_upload_dir()['path'].'/'.$image_name;
-	
-	if(! file_exists($upload_dir)) {
-		$file_image = fopen($upload_dir, 'wb');
-		$client->request('GET', $image_url, ['sink' => $file_image]);
-		if(is_resource($file_image))
-			fclose($file_image);
-	}
-	//--------- Logo meta data
-	$image_name_save = substr($image_name,0,strripos($image_name,'.'));
-	$wp_attachment_post = array(
-		'post_title'    =>      $image_name_save,
-		'post_status'   =>      "inherit",
-		'post_author'   =>      get_current_user_id(),
-		'ping_status'   =>      "closed",
-		'post_name'     =>      $image_name_save,
-		'post_parent'   =>      $vendor_id ,
-		'post_type'     =>      "attachment",
-		'post_mime_type'=>      "image/".substr($image_name,(strripos($image_name,'.')+1)),
-		'guid'          =>      wp_upload_dir()['url'].'/'.$image_name,
-	);
-	$image_id = wp_insert_attachment($wp_attachment_post,$upload_dir);
-	
-	require_once ABSPATH . 'wp-admin/includes/image.php';
-	$image_meta = wp_generate_attachment_metadata($image_id, $upload_dir);
-	wp_update_attachment_metadata( $image_id,  $image_meta );
-	
-	//---- Vendor logo
-	add_post_meta($vendor_id ,AFFILIATE_PROMOTIONS_PREFIX .'vendor_image',$image_id);
-	
-	//---- Vendor URL
-	add_post_meta($vendor_id ,AFFILIATE_PROMOTIONS_PREFIX .'vendor_url',$data->url);
-	
-	//---- Vendor description
-	add_post_meta($vendor_id ,AFFILIATE_PROMOTIONS_PREFIX .'vendor_description',$data->desc);
-	
-}
-
-function insert_new_promotion($data){
-	$client = new Client();
-	
-	$wp_post = array(
-		'post_title'    =>      $data->title,
-		'post_status'   =>      "publish",
-		'post_author'   =>      get_current_user_id(),
-		'post_content'  =>      $data->desc,
-		'post_excerpt'  =>      $data->short_desc,
-		'post_type'     =>      "affpromos_promotion",
-	);
-	$post_id = wp_insert_post($wp_post);
-	
-	//-----------Save image from url
-	$image_url = $data->image;
-	$image_name = substr($image_url,strripos($image_url,'/')+1);
-	$upload_dir = wp_upload_dir()['path'].'/'.$image_name;
-	if(! file_exists($upload_dir)) {
-		$file_image = fopen($upload_dir, 'wb');
-		$client->request('GET', $image_url, ['sink' => $file_image]);
-		if(is_resource($file_image))
-			fclose($file_image);
-	}
-	
-	//-----------Save image post as attachment
-	$image_name_save = substr($image_name,0,strripos($image_name,'.'));
-	$wp_attachment_post = array(
-		'post_title'    =>      $image_name_save,
-		'post_status'   =>      "inherit",
-		'post_author'   =>      get_current_user_id(),
-		'ping_status'   =>      "closed",
-		'post_name'     =>      $image_name_save,
-		'post_parent'   =>      $post_id ,
-		'post_type'     =>      "attachment",
-		'post_mime_type'=>      "image/".substr($image_name,(strripos($image_name,'.')+1)),
-		'guid'          =>      wp_upload_dir()['url'].'/'.$image_name,
-	);
-	$image_id = wp_insert_attachment($wp_attachment_post,$upload_dir);
-	
-	//------------Image meta data
-	require_once ABSPATH . 'wp-admin/includes/image.php';
-	$image_meta = wp_generate_attachment_metadata($image_id, $upload_dir);
-	wp_update_attachment_metadata( $image_id,  $image_meta );
-	set_post_thumbnail($post_id,$image_id);
-	
-	//------------Insert new Vendors if not existed
-	$vendor_name = $data->site_name;
-	
-	$vendor_id = insert_new_vendor($vendor_name);
-	
-	
-	//---- Promotion category
-	$cate = get_term_by('slug',$data->cate_guid,AFFILIATE_PROMOTIONS_PREFIX.'category');
-	wp_set_object_terms($post_id, $cate->term_id,AFFILIATE_PROMOTIONS_PREFIX.'category');
-	
-	//---- Promotion type
-	if( $data->coupons != null && $data->coupons != '' ){
-		wp_set_object_terms($post_id, 'Coupon' ,AFFILIATE_PROMOTIONS_PREFIX.'promotion_type');
-		add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'promotion_code', $data->coupons );
-	}else{
-		wp_set_object_terms($post_id, 'Promotion' ,AFFILIATE_PROMOTIONS_PREFIX.'promotion_type');
-	}
-	
-	//---- Promotion URL
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'promotion_url',$data->url);
-	
-	//---- Vendor ID
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'promotion_vendor',$vendor_id);
-	
-	//---- Image ID
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'promotion_image',$image_id);
-	
-	//---- Promotion title
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'promotion_title',$data->title);
-	
-	//---- Valid time
-	if(intval($data->expiration_timestamp) == 99999999999 )
-		$data->expiration_timestamp = time() + 3600*24* 30 ;  // 30 days from now
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'promotion_valid_until', intval($data->expiration_timestamp));
-	
-	//---- Promotion descriptions
-	add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'promotion_description',$data->short_desc);
-	
-}
-
 function is_manual_update(){
 	return isset($_GET['action']) && $_GET['action'] === 'update_promotions';
 }
@@ -908,12 +508,9 @@ function do_admin_action()
 	if (is_manual_update()) {
 		$opt = affpromos_get_options();
 		require_once AFFILIATE_PROMOTIONS_DIR . 'includes/apis/AccessTrade_Api.php';
-		
 		$client = new AccessTrade_Api($opt);
 		$client->run_full_update();
 		
-//		if (wp_redirect( $_SERVER['REQUEST_URI'] ))
-//			exit;
 	}
 }
 
@@ -944,89 +541,6 @@ function filter_post_by_vendor( $wp_query ) {
 }
 add_filter('pre_get_posts', 'filter_post_by_vendor');
 
-//function init_routine_check()
-//{
-//	if( !wp_next_scheduled( 'affpromos_cron_update' ) ) {
-//		wp_schedule_event( time()+10, 'aff_auto_update_interval', 'affpromos_cron_update' );
-//	}
-//}
-//
-//function add_custom_cron_intervals( $schedules ) {
-//	$schedules['aff_auto_update_interval'] = array(
-//		'interval'	=> 3600*AFFILIATE_AUTO_UPDATE_HOURS_PER_UPDATE,
-//		'display'	=> 'Once Every '.AFFILIATE_AUTO_UPDATE_HOURS_PER_UPDATE.' hours '
-//	);
-//	return (array)$schedules;
-//}
-//add_filter( 'cron_schedules', 'add_custom_cron_intervals', 0, 1 );
-
-//function affpromos_run_auto_update()
-//{
-//	update_option(AFFILIATE_PROMOTIONS_PREFIX . 'last_routine_check', time());
-//
-//	$opt = affpromos_get_options();
-//
-//	$token = $opt['aff_token'] ;
-//	$is_auto_update = $opt['auto_update_promotions'];
-//
-////    if( (strlen($token) != 32 ) || $is_auto_update != '1' )
-////    {
-////        return;
-////    }
-////    $chuck = 35;
-//	init_promotion_type();
-//
-//	$vendor = update_vendor($token);
-//	if (isset($vendor['error']))
-//	{
-//		// TODO : Handle error
-//		return;
-//	}
-//	$chuck -= $vendor['item_count'];
-//
-//	$category = update_category($token);
-//	if (isset($category['error']))
-//	{
-//		// TODO : Handle error
-//		return;
-//	}
-//
-//	$chuck -= $category['item_count'];
-//
-//	$promotion = update_promotions($chuck, $token);
-//	if (isset($promotion['error']))
-//	{
-//		// TODO : Handle error
-//		return;
-//	}
-//
-//	if($chuck > 0){
-//		$offer = update_offer($chuck, $token);
-//		if (isset($offer['error']))
-//		{
-//			return;
-//		}
-//	}
-//	$log_data = (object) array(
-//		'sync_type'=>'summary_',
-//		'status'=>'success',
-//		'message'=> implode("-",array(
-//			'Vendors :'     . _defaul($vendor['item_count'],0),
-//			'Categories :'  . _defaul($category['item_count'],0),
-//			'Promotions :'  . _defaul($promotion['item_count'],0),
-//			'Offers :'      . _defaul($offer['item_count'],0),
-//		)),
-//		'amount'=> _defaul($vendor['item_count'],0)
-//		           + _defaul($category['item_count'],0)
-//		           + _defaul($promotion['item_count'],0)
-//		           + _defaul($offer['item_count'],0),
-//	);
-//	affpromos_log_action($log_data);
-//	// TODO : Complete update
-//
-//}
-//add_action('affpromos_cron_update','affpromos_run_auto_update',0,0);
-//init_routine_check();
 
 function affpromos_log_action($data){
 	global $wpdb;

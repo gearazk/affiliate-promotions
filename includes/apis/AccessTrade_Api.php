@@ -4,6 +4,7 @@ if (!defined('ABSPATH')) exit;
 if ( ! class_exists('AccessTrade_Api') ) {
 	
 	class AccessTrade_Api {
+	 
 		
 		public function __construct($opt) {
 			$this->opt                  = $opt;
@@ -16,12 +17,14 @@ if ( ! class_exists('AccessTrade_Api') ) {
 					'Authorization' =>'Token '.$this->token,
 				)
 			);
+			
 			// Because there're tons of them every time
-			$this->offer_limit              = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'limit_update_offers'] ? $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'limit_update_offers']
+			$this->offer_limit              = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_limit'] ? $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_limit']
 				: 30 ;
-			$this->offer_vendors            = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_vendors'] ? $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_vendors']
+			$this->offer_limit              = max($this->offer_limit,30);
+			$this->offer_vendors            = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_vendor'] ? $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_vendor']
 				: '' ;
-			$this->offer_categories         = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_categories'] ? $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_categories']
+			$this->offer_categories         = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_category'] ? $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_category']
 				: '' ;
 			
 		}
@@ -197,6 +200,7 @@ if ( ! class_exists('AccessTrade_Api') ) {
 			);
 			
 			$data = $this->fetch_api(AFFILIATE_PROMOTIONS_ACCESSTRADE_GET_OFFER_API,$params);
+			
 			if ( ! $data ) {
 				$this->admin_notice(__('Connection error when update offers ',AFFILIATE_PROMOTIONS_PLUG),'danger');
 				return;
