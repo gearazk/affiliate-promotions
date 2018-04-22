@@ -1,0 +1,64 @@
+img.verdor-img {
+    height: 38px;
+    width: auto;
+}
+.stats-table {
+    display: table;
+    border: solid #eee;
+    border-width: 1px;
+    padding: 10px;
+}
+.stats-row.header {
+    color: #000;
+}
+.stats-row.header:hover{
+    background-color: #ffffff;
+}
+.stats-row {
+    display: table-row;
+}
+.stats-row:hover {
+    background-color: #eee;
+}
+.stats-cell {
+    display: table-cell;
+    vertical-align: middle;
+    background: transparent;
+    padding: 0 10px 0 10px;
+}
+.vendor-logo {
+    width: 100%;
+}
+.stripe{
+    background-color: #fbfbfb;
+}
+.column {
+    display: table-cell !important;
+    padding: 2px 10px;
+    height: 20px !important;
+    border: solid #ccc;
+    border-width: 0 0 1px 0;
+}
+.column1 {
+
+  display: table-column;
+}
+.column2 {
+  display: table-column;
+}
+
+.count-box {
+    cursor:pointer;
+    background-color: #e74c3c;
+    color: white;
+    text-align: center;
+    padding: 3px 5px 3px 5px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    font-weight: 700;
+    width: 45px;
+    margin: auto;
+}
+.count-offer{
+    background-color: #5785f2;
+}

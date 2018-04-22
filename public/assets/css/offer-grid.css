@@ -1,0 +1,168 @@
+.page-list{
+    max-width: 100%;
+}
+
+.main-section {
+    float: left;
+}
+.wrap-list-item {
+    position: relative;
+    font-family: Roboto, sans-serif;
+}
+
+.wrap-list-item .body-list-item {
+    margin-left: -8px;
+    margin-right: -8px;
+}
+.row {
+    /*margin-left: -15px;*/
+    /*margin-right: -15px;*/
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrap-list-item .body-list-item>div {
+    margin-bottom: 32px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.page-list .wrap-list-item .body-list-item .item {
+    max-height: 428px;
+    padding-bottom: 0px;
+}
+
+.wrap-list-item .body-list-item .item {
+    padding-top: 8px;
+}
+.item .post-thumb, .item .post-thumb a {
+    text-align: center;
+    display: block;
+}
+.wrap-list-item .post-thumb {
+    position: relative;
+    margin-bottom: 6px;
+    text-align: center;
+}
+.page-list .wrap-list-item .post-thumb .mask {
+    height: 240px;
+    line-height: 240px;
+}
+.wrap-list-item .post-thumb .mask {
+    display: block;
+    overflow: hidden;
+}
+.wrap-list-item .post-thumb .mask>a {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.item .post-thumb, .item .post-thumb a {
+    text-align: center;
+    display: block;
+}
+.wrap-list-item .post-thumb .mask>a>img {
+    max-width: 100%;
+    max-height: 100%;
+    position: relative;
+    z-index: 2;
+}
+.wrap-list-item .post-title a:hover {
+    color: #0388cd;
+}
+.wrap-list-item a{
+    box-shadow: none !important;
+    text-decoration: none;
+}
+
+.item img {
+    max-width: 100%;
+    display: inline-block;
+    height: auto;
+    border: 0;
+    vertical-align: middle;
+}
+.wrap-list-item .tags.new-item {
+    background-repeat: no-repeat;
+    display: block;
+    width: 64px;
+    height: 16px;
+    background-position: -419px -499px;
+}
+.wrap-list-item .title-info {
+    margin-bottom: 8px;
+    min-height: 66px;
+}
+.wrap-list-item .post-title {
+    margin: 0 0 8px;
+    font-size: 12px;
+    line-height: 1;
+    height: 36px;
+    overflow: hidden;
+}
+.wrap-list-item .post-title a {
+    color: #666;
+    line-height: 18px;
+    font-size: 13px;
+}
+.wrap-list-item .item-price {
+    height: 18px;
+    line-height: 18px;
+    letter-spacing: -.8px;
+}
+.wrap-list-item .amount-1 {
+    font-size: 18px;
+    font-weight: 400!important;
+    font-family: Roboto-Medium,sans-serif;
+    color: #c63829;
+    margin-right: 4px;
+}
+.wrap-list-item .amount-2 {
+    position: relative;
+    color: #666!important;
+}
+.wrap-list-item .sale-off {
+    white-space: nowrap;
+    color: #fff;
+    font-weight: 400!important;
+    font-family: Roboto-Medium,sans-serif;
+    background: #d60c0c;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 2px;
+    margin-left: 8px;
+}
+.wrap-list-item .adr-coupon {
+    margin: 0;
+}
+.wrap-list-item .item-rating {
+    margin-top: 8px;
+    overflow: hidden;
+}
+*, :after, :before {
+    box-sizing: border-box;
+}
+
+.adr-coupon {
+    overflow-y: hidden;
+}
+.wrap-list-item .amount-2:after {
+    border-bottom: 1px solid #666;
+    content: "";
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 50%;
+}
+.wrap-list-item .body-list-item>div:hover {
+    box-shadow: 0 0 2px rgba(87,87,87,.6);
+}
+
+/* Tao lao */
+.single .content-with-sidebar .entry > * {
+    margin-left: 30px !important;
+}
