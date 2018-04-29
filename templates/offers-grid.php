@@ -2,7 +2,9 @@
 /*
  * Promotions template
  */
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
 if ( ! isset ( $posts ) )
     return;
 

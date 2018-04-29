@@ -30,7 +30,6 @@ class SyncAjax {
                         }
 	                    ?>
                     };
-
                     $.post(ajaxurl, data, function(response) {
                         _this.data('loading','0');
                         _this.html(old_html);
@@ -70,6 +69,13 @@ class SyncAjax {
 	public static function ajax_sync_promotion_trigger_render() {
 		$trigger_id = SyncAjax::$AJAX_SYNC_PROMOTION_TRIGGER_ID;
 		$btn_trigger_text = __('Sync promotions',AFFILIATE_PROMOTIONS_PLUG);
+		
+		SyncAjax::ajax_sync_trigger_render($trigger_id,$btn_trigger_text);
+	}
+	
+	public static function ajax_sync_full_trigger_render() {
+		$trigger_id = SyncAjax::$AJAX_SYNC_FULL_TRIGGER_ID;
+		$btn_trigger_text = __('Sync everything',AFFILIATE_PROMOTIONS_PLUG);
 		
 		SyncAjax::ajax_sync_trigger_render($trigger_id,$btn_trigger_text);
 	}
@@ -121,16 +127,25 @@ class SyncAjax {
 				'message'   =>__('Updated',AFFILIATE_PROMOTIONS_PLUG),
 			));
 			die();
-
-//
-//			echo json_encode(array(
-//				'type'      =>'error',
-//				'message'   =>__('Some data is invalid',AFFILIATE_PROMOTIONS_PLUG),
-//			));
-//			die();
+		});
+	}
+	
+	public static function sync_full_ajax_handle() {
+		$ajax_action = SyncAjax::$AJAX_SYNC_FULL_TRIGGER_ID.'_ajax_action';
+		add_action('wp_ajax_'.$ajax_action, function (){
+			require_once AFFILIATE_PROMOTIONS_DIR . 'includes/apis/AccessTrade_Api.php';
+			$client = new AccessTrade_Api(affpromos_get_options());
+			$client->run_full_update();
+			
+			echo json_encode(array(
+				'type'      =>'success',
+				'message'   =>__('Updated',AFFILIATE_PROMOTIONS_PLUG),
+			));
+			die();
 		});
 	}
 	
 }
 SyncAjax::sync_offer_ajax_handle();
 SyncAjax::sync_promotion_ajax_handle();
+SyncAjax::sync_full_ajax_handle();

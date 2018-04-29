@@ -315,13 +315,34 @@ function affpromos_the_promotion_valid ($postid = null ) {
         $postid = get_the_ID();
 
     $valid_until = get_post_meta( $postid, AFFILIATE_PROMOTIONS_PREFIX . 'promotion_valid_until', true );
-
     if ( ! empty ( $valid_until ) ) {
+
         $interval = intval((intval($valid_until) - time())/ 86400) ;
         if($interval < 0)
-            $interval = 0;
-        return $interval.' ngày';
+	        return -1;
+        return $interval;
     }
-    return '';
+    return false;
 
+}
+function affpromos_the_promotion_valid_text ($postid = null ) {
+	
+    $valid = affpromos_the_promotion_valid($postid);
+    if ($valid == -1){
+        return 'Đã quá thời hạn';
+    }else if ($valid == false){
+        return 'Chưa cập nhật';
+    }else if ($valid == 0){
+	    return 'Ít hơn 1 ngày';
+    }
+    return $valid.' ngày';
+	
+}
+
+function affpromos_get_the_promotion_discount_content ($postid = null ) {
+    $code = affpromos_get_promotion_code($postid);
+    if ($code) return $code;
+    $discount = affpromos_get_promotion_discount($postid);
+	if ($discount) return $discount;
+    return false;
 }

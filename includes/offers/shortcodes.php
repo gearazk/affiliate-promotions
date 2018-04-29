@@ -130,7 +130,7 @@ function affpromos_add_offer_shortcode( $atts, $content ) {
 
         echo '<div class="affpromos-offer">';
 
-        if ( file_exists( $file ) ) {
+        if (  $file ) {
             include( $file );
         } else {
             _e('Template not found.', AFFILIATE_PROMOTIONS_PLUG);

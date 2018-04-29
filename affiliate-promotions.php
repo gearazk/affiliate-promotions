@@ -97,15 +97,8 @@ if( ! class_exists( 'Affpromos_Plugin' ) ) {
             define( 'AFFILIATE_PROMOTIONS_ACCESSTRADE_GET_PROMOTION_API', 'https://api.accesstrade.vn/v1/offers_informations' );
             define( 'AFFILIATE_PROMOTIONS_ACCESSTRADE_GET_OFFER_API', 'https://api.accesstrade.vn/v1/datafeeds' );
 
-            // API Url
-            define( 'AFFILIATE_PROMOTIONS_API', 'https://datafeed.khuyenmaimuasam.com/api/' );
-
-            // API host
-            define( 'AFFILIATE_PROMOTIONS_HOST', 'https://datafeed.khuyenmaimuasam.com/' );
-
             // Logs table name
             define( 'AFFILIATE_ACTION_LOG_TABLE',AFFILIATE_PROMOTIONS_PREFIX.'action_log'  );
-
 
             // Cron for auto-update feature)
             if (!defined('ALTERNATE_WP_CRON') || ALTERNATE_WP_CRON == false) {
@@ -166,12 +159,18 @@ if( ! class_exists( 'Affpromos_Plugin' ) ) {
             require_once AFFILIATE_PROMOTIONS_DIR . 'includes/shortcodes.php';
             
             // Widget
-//            require_once AFFILIATE_PROMOTIONS_DIR . 'includes/widgets/latest_promotion.php';
+            require_once AFFILIATE_PROMOTIONS_DIR . 'includes/widgets/latest_promotion.php';
+            require_once AFFILIATE_PROMOTIONS_DIR . 'includes/widgets/latest_offer.php';
 
             // css scripts
             wp_register_style( AFFILIATE_PROMOTIONS_PREFIX.'custom_style',  plugin_dir_url( __FILE__ ) . 'public/assets/css/admin.min.css' );
             wp_enqueue_style( AFFILIATE_PROMOTIONS_PREFIX.'custom_style' );
+//	        wp_enqueue_style( AFFILIATE_PROMOTIONS_PREFIX.'latest_promotions_widget', plugins_url('public/assets/css.css',dirname(__FILE__) ));
 
+
+	        wp_enqueue_script( AFFILIATE_PROMOTIONS_PREFIX.'custom_scrips', plugin_dir_url( __FILE__ ) . 'public/assets/js/affpromos_custom.js', array(), null, true );
+	
+	
         }
 
 

@@ -5,44 +5,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 add_action( 'widgets_init', function () {
-	register_widget( 'Aff_Latest_Promotion_Widget' );
+	register_widget( 'Aff_Latest_Offer_Widget' );
 });
 
 /**
  * Custom widgets.
  *
- * @package eCommerce_Gem
+ * @package
  */
 
-if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
+if ( ! class_exists( 'Aff_Latest_Offer_Widget' ) ) :
 	
 	/**
 	 * Latest Products widget class.
 	 *
 	 * @since 1.0.0
 	 */
-	class Aff_Latest_Promotion_Widget extends WP_Widget {
+	class Aff_Latest_Offer_Widget extends WP_Widget {
 		
-		private $post_type          = AFFILIATE_PROMOTIONS_PREFIX.'promotion';
+		private $post_type          = AFFILIATE_PROMOTIONS_PREFIX.'offer';
 		private $post_category_term = AFFILIATE_PROMOTIONS_PREFIX.'category';
 		
 		function __construct() {
 			
 			$opts = array(
-				'classname'   => AFFILIATE_PROMOTIONS_PREFIX.'latest_promotions_widget',
-				'description' => esc_html__( 'Affiliate promotions widget', AFFILIATE_PROMOTIONS_PLUG ),
+				'classname'   => AFFILIATE_PROMOTIONS_PREFIX.'latest_offers_widget',
+				'description' => esc_html__( 'Affiliate offers widget', AFFILIATE_PROMOTIONS_PLUG ),
 			);
 			parent::__construct(
-				AFFILIATE_PROMOTIONS_PREFIX.'latest_promotions' ,
-				esc_html__( 'Aff-Promos: Latest Promotions', AFFILIATE_PROMOTIONS_PLUG ), $opts );
+				AFFILIATE_PROMOTIONS_PREFIX.'latest_offers' ,
+				esc_html__( 'Aff-Promos: Latest Offers', AFFILIATE_PROMOTIONS_PLUG ), $opts );
 			$this->include_third_parties();
 			
 		}
 		
 		function include_third_parties(){
 			
-			if (!wp_style_is(AFFILIATE_PROMOTIONS_PREFIX.'latest_promotions_widget','queue'))
-				wp_enqueue_style( AFFILIATE_PROMOTIONS_PREFIX.'latest_promotions_widget', plugins_url('public/assets/css/affpromos_latest_promotions_widget.css',dirname(dirname(__FILE__)) ));
+			if (!wp_style_is(AFFILIATE_PROMOTIONS_PREFIX.'latest_offers_widget','queue'))
+				wp_enqueue_style( AFFILIATE_PROMOTIONS_PREFIX.'latest_offers_widget', plugins_url('public/assets/css/affpromos_latest_offers_widget.css',dirname(dirname(__FILE__)) ));
 			
 			if (!wp_style_is('jquery-slick','queue'))
 				wp_enqueue_style( 'jquery-slick', plugins_url('libs/slick/slick.css',dirname(__FILE__) ));
@@ -56,15 +56,15 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 			
 			$title             	= apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base );
 			
-			$promotion_category = ! empty( $instance['promotion_category'] ) ? $instance['promotion_category'] : 0;
+			$offer_category     = ! empty( $instance['offer_category'] ) ? $instance['offer_category'] : 0;
 			
-			$promotion_vendor   = ! empty( $instance['promotion_vendor'] ) ? $instance['promotion_vendor'] : '';
+			$offer_vendor       = ! empty( $instance['offer_vendor'] ) ? $instance['offer_vendor'] : 0;
 			
-			$promotion_count    = ! empty( $instance['promotion_count'] ) ? $instance['promotion_count'] : 6;
+			$offer_number       = ! empty( $instance['offer_number'] ) ? $instance['offer_number'] : 6;
 			
 			echo $args['before_widget']; ?>
 
-            <div class="affpromos_latest_promotion_widget <?php echo AFFILIATE_PROMOTIONS_PREFIX ?>latest-promotions-wrapper">
+            <div class="affpromos_latest_offer_widget <?php echo AFFILIATE_PROMOTIONS_PREFIX ?>latest-offers-wrapper">
 				
 				<?php
 				
@@ -111,59 +111,67 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 				
 				$tax_query  = array();
 				
-				if($promotion_category){
-					
+				if($offer_category){
 					$tax_query[] = array(
 						'taxonomy' => $this->post_category_term,
 						'field'    => 'id',
-						'terms'    => absint( $promotion_category ),
+						'terms'    => absint( $offer_category ),
 						'operator' => 'IN',
 					);
 					
 				}
 				
-				if($promotion_vendor){
+				if($offer_vendor){
 					$meta_query[] = array(
 						'relation' => 'IN',
 						array(
-							'key'   => AFFILIATE_PROMOTIONS_PREFIX.'promotion_vendor',
-							'value' => array($promotion_vendor),
+							'key'   => AFFILIATE_PROMOTIONS_PREFIX.'offer_vendor',
+							'value' => array($offer_vendor),
 						),
 					);
 				}
 				
+				
 				$query_args = array(
-					'post_type'           => $this->post_type,
-					'post_status'         => 'publish',
-					'ignore_sticky_posts' => 1,
-					'posts_per_page'      => absint( $promotion_count ),
-					'meta_query'          => $meta_query,
-					'no_found_rows'       => true,
+					'post_type'             => $this->post_type,
+					'post_status'           => 'publish',
+					'ignore_sticky_posts'   => 1,
+					'posts_per_page'        => absint( $offer_number ),
+					'meta_query'            => $meta_query,
+					'no_found_rows'         => true,
+                    'orderby'               => array(
+                            'date'  => 'DESC'
+                    )
 				);
 				
 				if ( !empty($tax_query) ) {
 					$query_args['tax_query'] = $tax_query;
 				}
 				
-				$latest_promotions = new WP_Query( $query_args );
-				if ( $latest_promotions->have_posts() ) :?>
+				$latest_offers = new WP_Query( $query_args );
+				if ( $latest_offers->have_posts() ) :?>
 
                     <div class="inner-wrapper">
-                        <div class="<?php echo AFFILIATE_PROMOTIONS_PREFIX ?>promotions-carousel-wrap">
+                        <div class="<?php echo AFFILIATE_PROMOTIONS_PREFIX ?>offers-carousel-wrap">
                             <ul class="<?php echo AFFILIATE_PROMOTIONS_PREFIX ?>slick " data-slick='<?php echo $carousel_args_encoded; ?>'>
 								<?php
-								while ( $latest_promotions->have_posts() ) :
-									$latest_promotions->the_post();
-									include affpromos_get_template_file('widget-promotion-item','widget');
+								while ( $latest_offers->have_posts() ) :
+									$latest_offers->the_post();
+									include affpromos_get_template_file('widget-offer-item','widget');
 								endwhile;
 								
 								wp_reset_postdata(); ?>
                             </ul>
                         </div>
                     </div>
+				<?php else: ?>
+                        <div class="inner-wrapper">
+                            <?php _e('No offers available',AFFILIATE_PROMOTIONS_PLUG)?>
+                        </div>
 				<?php endif; ?>
-            </div><!-- .latest-promotions-widget -->
+            </div><!-- .latest-offers-widget -->
 			<?php
+			wp_reset_query();
 			echo $args['after_widget'];
 			
 		}
@@ -171,9 +179,9 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 		function update( $new_instance, $old_instance ) {
 			$instance = $old_instance;
 			$instance['title']          	= sanitize_text_field( $new_instance['title'] );
-			$instance['promotion_category'] = absint( $new_instance['promotion_category'] );
-			$instance['promotion_vendor'] 	= sanitize_text_field( $new_instance['promotion_vendor'] );
-			$instance['promotion_count']  	= absint( $new_instance['promotion_count'] );
+			$instance['offer_category']  	= absint( $new_instance['offer_category'] );
+			$instance['offer_vendor']  	    = absint( $new_instance['offer_vendor'] );
+			$instance['offer_number']  	    = absint( $new_instance['offer_number'] );
 			
 			return $instance;
 		}
@@ -182,9 +190,9 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 			
 			$instance = wp_parse_args( (array) $instance, array(
 				'title'          		=> '',
-				'promotion_category' 	=> '',
-				'promotion_vendor'      => '',
-				'promotion_count'       => 8,
+				'offer_category' 		=> '',
+				'offer_vendor'          => '',
+				'offer_number' 		    => 6,
 			) );
 			?>
             <p>
@@ -195,16 +203,17 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
             </p>
 
             <p>
-                <label for="<?php echo  esc_attr( $this->get_field_id( 'promotion_category' ) ); ?>"><strong><?php esc_html_e( 'Select Category:', AFFILIATE_PROMOTIONS_PLUG ); ?></strong></label>
+                <label for="<?php echo  esc_attr( $this->get_field_id( 'offer_category' ) ); ?>">
+                    <strong><?php esc_html_e( 'Select Offer category:', AFFILIATE_PROMOTIONS_PLUG ); ?></strong></label>
 				<?php
 				$cat_args = array(
 					'orderby'         => 'name',
 					'hide_empty'      => 0,
 					'class' 		  => 'widefat',
-					'taxonomy'        => AFFILIATE_PROMOTIONS_PREFIX.'category',
-					'name'            => $this->get_field_name( 'promotion_category' ),
-					'id'              => $this->get_field_id( 'promotion_category' ),
-					'selected'        => absint( $instance['promotion_category'] ),
+					'taxonomy'        => $this->post_category_term,
+					'name'            => $this->get_field_name( 'offer_category' ),
+					'id'              => $this->get_field_id( 'offer_category' ),
+					'selected'        => absint( $instance['offer_category'] ),
 					'show_option_all' => esc_html__( 'All Categories',AFFILIATE_PROMOTIONS_PLUG ),
 				);
 				wp_dropdown_categories( $cat_args );
@@ -212,30 +221,29 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
             </p>
 
             <p>
-                <label for="<?php echo esc_attr( $this->get_field_id( 'promotion_vendor' ) ); ?>">
-                    <strong><?php _e( 'Promotion vendor:', AFFILIATE_PROMOTIONS_PLUG ); ?></strong>
-                </label>
+                <label for="<?php echo esc_attr( $this->get_field_id( 'product_type' ) ); ?>">
+                    <strong><?php _e( 'Offer vendor:', AFFILIATE_PROMOTIONS_PLUG ); ?></strong></label>
 				<?php
-				$this->dropdown_promotion_vendor( array(
-						'id'       => $this->get_field_id( 'promotion_vendor' ),
-						'name'     => $this->get_field_name( 'promotion_vendor' ),
-						'selected' => esc_attr( $instance['promotion_vendor'] ),
+				$this->dropdown_offer_vendor( array(
+						'id'       => $this->get_field_id( 'offer_vendor' ),
+						'name'     => $this->get_field_name( 'offer_vendor' ),
+						'selected' => esc_attr( $instance['offer_vendor'] ),
 					)
 				);
 				?>
             </p>
 
             <p>
-                <label for="<?php echo esc_attr( $this->get_field_name('promotion_count') ); ?>">
-					<?php esc_html_e('Number of Promotions:', AFFILIATE_PROMOTIONS_PLUG); ?>
+                <label for="<?php echo esc_attr( $this->get_field_name('offer_number') ); ?>">
+					<?php esc_html_e('Number of Offers:', AFFILIATE_PROMOTIONS_PLUG); ?>
                 </label>
-                <input class="widefat" id="<?php echo esc_attr( $this->get_field_id('promotion_count') ); ?>" name="<?php echo esc_attr( $this->get_field_name('promotion_count') ); ?>" type="number" value="<?php echo absint( $instance['promotion_count'] ); ?>" />
+                <input class="widefat" id="<?php echo esc_attr( $this->get_field_id('offer_number') ); ?>" name="<?php echo esc_attr( $this->get_field_name('offer_number') ); ?>" type="number" value="<?php echo absint( $instance['offer_number'] ); ?>" />
             </p>
 			
 			<?php
 		}
 		
-		function dropdown_promotion_vendor( $args ) {
+		function dropdown_offer_vendor( $args ) {
 			$defaults = array(
 				'id'       => '',
 				'class'    => 'widefat',

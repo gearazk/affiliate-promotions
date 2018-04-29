@@ -77,9 +77,7 @@ function affpromos_get_offer_price_sale_vnd ($postid = null){
     $price = get_post_meta( $postid, AFFILIATE_PROMOTIONS_PREFIX . 'offer_price_sale', true );
 
     if (!empty($price))
-    {
         return format_vnd($price);
-    }
     return '';
 }
 function affpromos_get_offer_discount_percent ($postid = null){
@@ -93,7 +91,7 @@ function affpromos_get_offer_discount_percent ($postid = null){
     if (!empty($price) && !empty($price_sale) && $price != $price_sale)
     {
         $percent = intval((1-($price_sale/$price))*100);
-        return '- '.$percent.'%';
+        return $percent.'%';
     }
     return false;
 }

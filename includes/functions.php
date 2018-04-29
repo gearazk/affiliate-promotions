@@ -38,6 +38,5 @@ function affpromos_get_template_file( $template, $type ) {
 
     if ( file_exists( $template_file ) )
         return $template_file;
-
-    return ( 'widget' === $type ) ? AFFILIATE_PROMOTIONS_DIR . 'templates/widget.php' : AFFILIATE_PROMOTIONS_DIR . 'templates/standard.php';
+	return false;
 }
