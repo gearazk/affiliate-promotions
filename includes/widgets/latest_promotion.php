@@ -17,9 +17,9 @@ add_action( 'widgets_init', function () {
 if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 	
 	/**
-	 * Latest Products widget class.
+	 * Latest Promotion widget class.
 	 *
-	 * @since 1.0.0
+	 * @since 0.1.6
 	 */
 	class Aff_Latest_Promotion_Widget extends WP_Widget {
 		
@@ -132,6 +132,16 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 					);
 				}
 				
+				$meta_query[] = array(
+					'relation' => 'IN',
+					array(
+						'key'       => AFFILIATE_PROMOTIONS_PREFIX.'promotion_valid_until',
+						'type'      => 'numeric',
+						'compare'   => '>',
+						'value'     => time(),
+					),
+				);
+				
 				$query_args = array(
 					'post_type'           => $this->post_type,
 					'post_status'         => 'publish',
@@ -139,6 +149,9 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 					'posts_per_page'      => absint( $promotion_count ),
 					'meta_query'          => $meta_query,
 					'no_found_rows'       => true,
+					'orderby'             => array(
+						'date'  => 'DESC'
+					)
 				);
 				
 				if ( !empty($tax_query) ) {

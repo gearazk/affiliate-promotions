@@ -3,7 +3,6 @@
 .affpromos_latest_offer_widget img{height:auto;max-width:100%;}
 .affpromos_latest_offer_widget .offer-thumb-wrap{height:auto;max-width:100%;}
 /*! CSS Used from: http://localhost/wp-content/plugins/woocommerce/assets/css/woocommerce.css?ver=3.3.5 */
-.affpromos_latest_offer_widget span.affonsale{min-height:3.236em;min-width:3.236em;padding:.202em;font-size:1em;font-weight:700;position:absolute;text-align:center;line-height:3.236;top:-.5em;left:-.5em;margin:0;border-radius:100%;background-color:#77a464;color:#fff;font-size:.857em;z-index:9;}
 .affpromos_latest_offer_widget a.button{font-size:100%;margin:0;line-height:1;cursor:pointer;position:relative;text-decoration:none;overflow:visible;padding:.618em 1em;font-weight:700;border-radius:3px;left:auto;color:#515151;background-color:#ebe9eb;border:0;display:inline-block;background-image:none;-webkit-box-shadow:none;box-shadow:none;text-shadow:none;}
 .affpromos_latest_offer_widget a.button:hover{background-color:#dad8da;text-decoration:none;background-image:none;color:#515151;}
 .affpromos_latest_offer_widget a.button:disabled{color:inherit;cursor:not-allowed;opacity:.5;padding:.618em 1em;}
@@ -36,7 +35,7 @@
     text-align: center;
     font-weight: 700;
     color: #fff;}
-.affpromos_latest_offer_widget span.affonsale{background-color:#fa6161;position:absolute;top:.5px!important;left:.5px!important;height:50px;width:50px;color:#fff;font-size:14px;line-height:50px;text-align:center;font-weight:400;padding:0px;
+.affpromos_latest_offer_widget span.affonsale{background-color:#fa6161;position:absolute;top:-9.5px!important;left:24px!important;height:50px;width:50px;color:#fff;font-size:14px;line-height:50px;text-align:center;font-weight:400;padding:0px;
     border-radius: 5px;
     -webkit-transform: rotate(45deg);
     -moz-transform: rotate(45deg);
@@ -46,10 +45,10 @@ li.affoffer{padding-top: 10px !important;}
 .affpromos_latest_offer_widget a.button{background-color:#fa6161;font-weight:400;border:1px solid #fa6161;color:#fff!important;opacity:1!important;border-radius:0px;}
 .affpromos_latest_offer_widget a.button:hover{background:#2e2e2e!important;border-color:#2e2e2e!important;color:#fff!important;}
 li.affoffer .affoffer-thumb-wrap,li.affoffer .affoffer-info-wrap{float:left;width:100%;}
-.affoffer .affpromos_latest_offer_widget-loop-product__title{color:#0a0b0c;font-size:20px;font-weight:500;margin-bottom:0px;padding:0;}
+.affoffer .affpromos_latest_offer_widget-loop-product__title{color:#0a0b0c;font-size:17px;font-weight:500;margin-bottom:0px;padding:0;}
 .affoffer .price{color:#fa6161;display:block;width:100%;font-size:20px;font-weight:500;margin-bottom:15px;}
-.affoffer .price del{color:#9d9d9d;margin-right:5px;}
-.affoffer .price ins{background:transparent;}
+.affoffer .price del{color:#9d9d9d;margin-right:5px;font-size: 15px}
+.affoffer .price ins{background:transparent;font-weight: 700}
 .button.add_to_cart_button,a.button.add_to_cart_button{background:transparent;color:#fff;font-size:15px;font-weight:600;line-height:1;border:1px solid #fff;padding:15px 30px;margin-top:0px;}
 .button.add_to_cart_button:hover{border-color:#2e2e2e;}
 li.affoffer,li.affoffer .affoffer-thumb-wrap{position:relative;}

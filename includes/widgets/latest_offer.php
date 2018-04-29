@@ -17,9 +17,9 @@ add_action( 'widgets_init', function () {
 if ( ! class_exists( 'Aff_Latest_Offer_Widget' ) ) :
 	
 	/**
-	 * Latest Products widget class.
+	 * Latest Offer widget class.
 	 *
-	 * @since 1.0.0
+	 * @since 0.1.6
 	 */
 	class Aff_Latest_Offer_Widget extends WP_Widget {
 		
@@ -130,7 +130,15 @@ if ( ! class_exists( 'Aff_Latest_Offer_Widget' ) ) :
 						),
 					);
 				}
-				
+				$meta_query[] = array(
+					'relation' => 'IN',
+					array(
+						'key'       => AFFILIATE_PROMOTIONS_PREFIX.'offer_price_sale',
+						'type'      => 'numeric',
+						'compare'   => '>',
+						'value'     => 0,
+					),
+				);
 				
 				$query_args = array(
 					'post_type'             => $this->post_type,

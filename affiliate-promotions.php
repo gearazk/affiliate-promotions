@@ -270,10 +270,7 @@ class AffiliatePromotionWidget {
             <?php
         }
         echo "</div>";
-
-
     }
-
 }
 
 add_action( 'wp_dashboard_setup', array('AffiliatePromotionWidget','init') );

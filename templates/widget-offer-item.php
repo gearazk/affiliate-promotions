@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <?php } ?>
 		<img width="300" height="300" src="<?php the_post_thumbnail_url() ?>" class="attachment-affpromos_latest_offer_widget_thumbnail size-affpromos_latest_offer_widget_thumbnail wp-post-image" alt="" />
 		<div class="add-to-cart-wrap">
-			<a href="<?php echo affpromos_get_offer_url() ?>" data-quantity="1" class="button product_type_simple add_to_cart_button ajax_add_to_cart" data-product_id="46" data-product_sku="" aria-label="Add &ldquo;Leather Jacket&rdquo; to your cart" rel="nofollow">
+			<a href="<?php echo affpromos_get_offer_url() ?>" class="button product_type_simple add_to_cart_button ajax_add_to_cart" rel="nofollow">
 				<?php _e('GET IT NOW',AFFILIATE_PROMOTIONS_PLUG) ?>
 			</a>
 		</div>
