@@ -44,8 +44,6 @@
 .fa-clock-o:before{content:"";}
 .fa-bookmark-o:before{content:"";}
 .fa-scissors:before{content:"";}
-*{-webkit-appearance:none;-moz-appearance:none;appearance:none;-webkit-font-smoothing:antialiased;font-smoothing:antialiased;font-smooth:auto;transform-origin:0 0;}
-ul{margin-bottom:0;}
 .button-code{position:relative;border-radius:4px 0 0 4px;margin:10px 0 0;height:40px;width:100%;display:block !important;font-weight:900;}
 .button-code .apla,.button-code .btn-label{text-align:center;height:100%;position:absolute;top:0;}
 .button-code .apla{background:#e5161e;left:0;width:100%;width:calc(100% - 22px);z-index:2;border-radius:4px 0 0 4px!important;display:block;}
@@ -120,12 +118,6 @@ ul{margin-bottom:0;}
 @media (min-width:768px) and (max-width:991px){
     .hidden-sm{display:none!important;}
 }
-.fa{display:inline-block;font:normal normal normal 14px/1 FontAwesome;font-size:inherit;text-rendering:auto;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-.fa-clock-o:before{content:"";}
-.fa-bookmark-o:before{content:"";}
-.fa-scissors:before{content:"";}
-:active,:focus,:visited{outline:0!important;}
-::selection{background:rgba(114,195,252,.25);}
 .visible{visibility:visible!important;}
 .button-code:hover{-webkit-transition-delay:.2s;transition-delay:.2s;}
 .button-code:hover .apla{width:calc(100% - 40px);}
