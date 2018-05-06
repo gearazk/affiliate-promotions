@@ -11,9 +11,8 @@
 // Exit if accessed directly
 if (!defined('ABSPATH')) exit;
 
-// Include guzzle dependencies
-require_once AFFILIATE_PROMOTIONS_DIR . 'includes/libs/vendor/autoload.php';
 require_once AFFILIATE_PROMOTIONS_DIR . 'includes/admin/ajax-functions.php';
+require_once AFFILIATE_PROMOTIONS_DIR . 'includes/admin/update.php';
 
 if ( ! class_exists('Affpromos_Settings') ) {
 	
@@ -389,7 +388,7 @@ if ( ! class_exists('Affpromos_Settings') ) {
                                 <form action="options.php" method="post">
 									<?php
 									settings_fields('affpromos_settings');
-									if($_GET['aff_page'] == 'logs') {
+									if(isset($_GET['aff_page']) && $_GET['aff_page'] == 'logs') {
 										affpromos_logs_sections();
 									}else{
 										affpromos_do_settings_sections('affpromos_settings');
@@ -408,20 +407,6 @@ if ( ! class_exists('Affpromos_Settings') ) {
 		}
 	}
 }
-
-function text_ajax_process_request() {
-	// first check if data is being sent and that it is the data we want
-//	if ( isset( $_POST["post_var"] ) ) {
-		// now set our response var equal to that of the POST var (this will need to be sanitized based on what you're doing with with it)
-		$response = 'nice';
-		// send the response back to the front end
-		echo $response;
-		die();
-//	}
-}
-add_action('wp_ajax_test_response', 'text_ajax_process_request');
-
-
 
 
 $aff_settings = new Affpromos_Settings();
@@ -460,7 +445,6 @@ function affpromos_do_settings_sections( $page ) {
 		echo '</div>';
 	}
 }
-
 
 
 function affpromos_logs_sections(){
@@ -526,11 +510,10 @@ function is_manual_update(){
 function do_admin_action()
 {
 	if (is_manual_update()) {
-		$opt = affpromos_get_options();
-		require_once AFFILIATE_PROMOTIONS_DIR . 'includes/apis/AccessTrade_Api.php';
-		$client = new AccessTrade_Api($opt);
-		$client->run_full_update();
 		
+		require_once AFFILIATE_PROMOTIONS_DIR . 'includes/apis/AccessTrade_Api.php';
+		$client = new AccessTrade_Api();
+		$client->run_full_update();
 	}
 }
 
@@ -539,27 +522,12 @@ function admin_noti_mess ($mess, $type='success')
 	add_action( 'admin_notices', function() use ($mess,$type) {
 		?>
         <div class="notice notice-<?php echo $type; ?> is-dismissible">
-            <p><?php _e( $mess , 'Noti' ); ?></p>
+            <p><?php echo $mess ?></p>
         </div>
 		<?php
 	}
 	);
 }
-
-
-function filter_post_by_vendor( $wp_query ) {
-	if (is_admin()) {
-		$post_type = $wp_query->query['post_type'];
-		if ( $post_type == 'affpromos_promotion' && isset($_GET['vendor']) ) {
-			$wp_query->set('meta_key', 'affpromos_promotion_vendor');
-			$wp_query->set('meta_value',$_GET['vendor'] );
-		}elseif ($post_type == 'affpromos_offer' && isset($_GET['vendor'])){
-			$wp_query->set('meta_key', 'affpromos_offer_vendor');
-			$wp_query->set('meta_value',$_GET['vendor'] );
-		}
-	}
-}
-add_filter('pre_get_posts', 'filter_post_by_vendor');
 
 
 function affpromos_log_action($data){

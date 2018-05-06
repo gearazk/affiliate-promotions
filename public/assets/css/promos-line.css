@@ -339,7 +339,7 @@ input[type=radio] {
 }
 
 .coupon-store .store-coupon-list .item .details-toggle {
-    height: 22px;
+    height: 30px;
     background-color: #f2f2f2;
     cursor: pointer
 }
@@ -473,7 +473,8 @@ input[type=radio] {
 }
 
 .coupon-store .store-coupon-list .item .inner .right .right-inner .tags .tag.recommended.code {
-    color: #f63
+    color: #f63;
+    width: 85px;
 }
 
 .coupon-store .store-coupon-list .item .inner .right .right-inner .tags .tag.verified {
@@ -552,4 +553,11 @@ input[type=radio] {
 .entry a:not(button) {
     text-decoration: none !important;
     font-family: inherit;
+}
+.tag.validity .fa-clock-o{
+    color: #ff6633;
+
+}
+.tag.verified .fa-check-circle-o{
+    color: #52a216;
 }

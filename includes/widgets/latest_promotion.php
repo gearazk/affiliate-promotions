@@ -11,7 +11,7 @@ add_action( 'widgets_init', function () {
 /**
  * Custom widgets.
  *
- * @package eCommerce_Gem
+ * @package Affiliate Promotion
  */
 
 if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
@@ -44,13 +44,7 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 			if (!wp_style_is(AFFILIATE_PROMOTIONS_PREFIX.'latest_promotions_widget','queue'))
 				wp_enqueue_style( AFFILIATE_PROMOTIONS_PREFIX.'latest_promotions_widget', plugins_url('public/assets/css/affpromos_latest_promotions_widget.css',dirname(dirname(__FILE__)) ));
 			
-			if (!wp_style_is('jquery-slick','queue'))
-				wp_enqueue_style( 'jquery-slick', plugins_url('libs/slick/slick.css',dirname(__FILE__) ));
-			
-			if (!wp_script_is('jquery-slick','queue'))
-				wp_enqueue_script( 'jquery-slick', plugins_url('libs/slick/slick.js',dirname(__FILE__)), array('jquery'), '1.6.0', true );
 		}
-		
 		
 		function widget( $args, $instance ) {
 			
@@ -71,41 +65,6 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 				if ( $title ) {
 					echo $args['before_title'] . esc_html( $title ) . $args['after_title'];
 				}
-				
-				$carousel_args = array(
-					'slidesToShow' 	=> 4,
-					'slidesToScroll'=> 4,
-					'dots'         	=> true,
-					'arrows'       	=> false,
-					'responsive'   	=> array(
-						array(
-							'breakpoint' => 1024,
-							'settings'   => array(
-								'slidesToShow' => 4,
-							),
-						),
-						array(
-							'breakpoint' => 992,
-							'settings'   => array(
-								'slidesToShow' => 3,
-							),
-						),
-						array(
-							'breakpoint' => 659,
-							'settings'   => array(
-								'slidesToShow' => 2,
-							),
-						),
-						array(
-							'breakpoint' => 479,
-							'settings'   => array(
-								'slidesToShow' => 1,
-							),
-						),
-					),
-				);
-				
-				$carousel_args_encoded = wp_json_encode( $carousel_args );
 				
 				$meta_query = array();
 				
@@ -163,15 +122,13 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 
                     <div class="inner-wrapper">
                         <div class="<?php echo AFFILIATE_PROMOTIONS_PREFIX ?>promotions-carousel-wrap">
-                            <ul class="<?php echo AFFILIATE_PROMOTIONS_PREFIX ?>slick " data-slick='<?php echo $carousel_args_encoded; ?>'>
-								<?php
-								while ( $latest_promotions->have_posts() ) :
-									$latest_promotions->the_post();
-									include affpromos_get_template_file('widget-promotion-item','widget');
-								endwhile;
-								
-								wp_reset_postdata(); ?>
-                            </ul>
+							<?php
+							while ( $latest_promotions->have_posts() ) :
+								$latest_promotions->the_post();
+								include affpromos_get_template_file('widget-promotion-item','widget');
+							endwhile;
+							
+							wp_reset_postdata(); ?>
                         </div>
                     </div>
 				<?php endif; ?>

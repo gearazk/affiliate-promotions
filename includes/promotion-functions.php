@@ -148,6 +148,21 @@ function affpromos_get_promotion_title( $postid = null ) {
     return $title;
 }
 
+function affpromos_get_promotion_vendor_name( $postid = null ) {
+	
+	if ( empty ( $postid ) )
+		$postid = get_the_ID();
+	
+	// Vendor
+	$vendor_id = affpromos_get_promotion_vendor_id( $postid );
+	
+	if ( ! empty ( $vendor_id ) ){
+		$title = get_the_title( $vendor_id );
+		return $title;
+	}
+    return false;
+}
+
 function affpromos_get_promotion_description( $postid = null ) {
 
     if ( empty ( $postid ) )
@@ -331,11 +346,13 @@ function affpromos_the_promotion_valid_text ($postid = null ) {
     if ($valid == -1){
         return 'Đã quá thời hạn';
     }else if ($valid == false){
-        return 'Chưa cập nhật';
+        return 'Xác nhận';
     }else if ($valid == 0){
 	    return 'Ít hơn 1 ngày';
+    }else if ($valid > 30){
+	    return 'Một khoảng thời gian';
     }
-    return $valid.' ngày';
+    return 'Còn '.$valid.' ngày';
 	
 }
 

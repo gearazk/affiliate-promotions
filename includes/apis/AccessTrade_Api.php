@@ -6,8 +6,14 @@ if ( ! class_exists('AccessTrade_Api') ) {
 	class AccessTrade_Api {
 	 
 		
-		public function __construct($opt) {
-			$this->opt                  = $opt;
+		public function __construct($opt=null) {
+		    
+		    if (!isset($opt))
+			    $opt = affpromos_get_options();
+			
+		    $this->opt                  = $opt;
+		    
+		    // TODO: Add more platforms beside AccessTrade
 			$this->token                = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'token'];
 			
 			$this->api_options          = array(
@@ -22,6 +28,7 @@ if ( ! class_exists('AccessTrade_Api') ) {
 			$this->offer_limit              = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_limit'] ? $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_limit']
 				: 30 ;
 			$this->offer_limit              = max($this->offer_limit,30);
+			
 			$this->offer_vendors            = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_vendor'] ? $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_vendor']
 				: '' ;
 			$this->offer_categories         = $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_category'] ? $opt[AFFILIATE_PROMOTIONS_AT_PREFIX.'offer_category']
@@ -72,7 +79,7 @@ if ( ! class_exists('AccessTrade_Api') ) {
 			}
 		}
 		
-		public function process_vendor_data($vendor) {
+		public static function process_vendor_data($vendor) {
 			global $wpdb;
 			
 			$post_type = AFFILIATE_PROMOTIONS_PREFIX.'vendor';
@@ -113,12 +120,15 @@ if ( ! class_exists('AccessTrade_Api') ) {
 		}
 		
 		
-		public function process_promotion_data($promotions){
+		public static function process_promotion_data($promotions){
 			global $wpdb;
 			
 			$meta_id_name = AFFILIATE_PROMOTIONS_PREFIX .'promotion_id';
 			$meta_id = AFFILIATE_PROMOTIONS_AT_PREFIX .$promotions->id;
 			$post_id = $wpdb->get_var( "SELECT * FROM $wpdb->postmeta WHERE (meta_key = '{$meta_id_name}' and meta_value = '{$meta_id}' );");
+			var_dump($promotions);
+			
+			
 			if ($post_id !== null){
 				return $post_id;
 			}
@@ -132,9 +142,9 @@ if ( ! class_exists('AccessTrade_Api') ) {
 				'post_type'     =>      $post_type,
 			),true);
 			
-			$this->add_feature_image_to_post($promotions->image,$post_id);
+			AccessTrade_Api::add_feature_image_to_post($promotions->image,$post_id);
 			
-			$vendor_id = $this->process_vendor_data((object) array(
+			$vendor_id = AccessTrade_Api::process_vendor_data((object) array(
 				'merchant'  =>$promotions->merchant,
 				'url'       =>$promotions->domain,
 			));
@@ -151,7 +161,7 @@ if ( ! class_exists('AccessTrade_Api') ) {
 				add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'promotion_discount', implode($coupon_save,',') );
 			}
 			foreach ($promotions->categories as $category){
-				$cate_id = $this->process_categories_data($category);
+				$cate_id = AccessTrade_Api::process_categories_data($category);
 				wp_set_object_terms( $post_id, $cate_id, AFFILIATE_PROMOTIONS_PREFIX . 'category' );
 			}
 			
@@ -175,7 +185,7 @@ if ( ! class_exists('AccessTrade_Api') ) {
 		//---- End Promotion
 		
 		//---- Category
-		public function process_categories_data($category){
+		public static function process_categories_data($category){
 			$term_id = get_term_by('slug', $category->category_name, AFFILIATE_PROMOTIONS_PREFIX.'category' );
 			
 			if( $term_id )
@@ -206,7 +216,7 @@ if ( ! class_exists('AccessTrade_Api') ) {
 				return;
 			}
 			foreach ($data->data as $offer){
-				$this->process_offer_data($offer);
+				AccessTrade_Api::process_offer_data($offer);
 			}
 			
 			if( count($data->data) > 0){
@@ -214,9 +224,10 @@ if ( ! class_exists('AccessTrade_Api') ) {
 			}
 		}
 		
-		// TODO: AccessTrade is STUPID !!
-		public function process_offer_data($offer) {
+		public static function process_offer_data($offer) {
+		 
 			global $wpdb;
+			
 			$meta_id_name = AFFILIATE_PROMOTIONS_PREFIX .'offer_id';
 			$meta_id = AFFILIATE_PROMOTIONS_AT_PREFIX .$offer->sku;
 			$post_id = $wpdb->get_var( "SELECT * FROM $wpdb->postmeta WHERE (meta_key = '{$meta_id_name}' and meta_value = '{$meta_id}' );");
@@ -231,19 +242,20 @@ if ( ! class_exists('AccessTrade_Api') ) {
 				'post_status'   =>      "publish",
 				'post_content'  =>      $offer->desc ? $offer->desc : '',
 				'post_type'     =>      $post_type,
-			),true);
+			));
 			
-			$this->add_feature_image_to_post($offer->image,$post_id);
+			AccessTrade_Api::add_feature_image_to_post($offer->image,$post_id);
 			
-			$vendor_id = $this->process_vendor_data((object) array(
+			$vendor_id = AccessTrade_Api::process_vendor_data((object) array(
 				'merchant'  =>$offer->merchant,
 				'url'       =>$offer->domain,
 			));
 			
-			$cate_id = $this->process_categories_data((object) array(
+			$cate_id = AccessTrade_Api::process_categories_data((object) array(
 				'category_name_show'=>$offer->cate,
 				'category_name'     =>$offer->cate,
 			));
+			
 			wp_set_object_terms( $post_id, $cate_id, AFFILIATE_PROMOTIONS_PREFIX . 'category' );
 
 			add_post_meta($post_id,AFFILIATE_PROMOTIONS_PREFIX .'offer_vendor',$vendor_id);

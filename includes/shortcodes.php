@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once AFFILIATE_PROMOTIONS_DIR . 'includes/libs/vendor/autoload.php';
 require_once AFFILIATE_PROMOTIONS_DIR . 'includes/libs/simple_html_dom.php';
 require_once AFFILIATE_PROMOTIONS_DIR . 'includes/admin/class.settings.php';
+require_once AFFILIATE_PROMOTIONS_DIR . 'includes/product-crawler.php';
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -23,26 +24,28 @@ function affpromos_add_promotions_shortcode( $atts, $content ) {
 	}
 	
 	extract( shortcode_atts( array(
-		'template'=>'grid',
-		'search' => null,
-		'category' => null,
-		'type' => null,
-		'vendor'=> null,
-		'max' => -1,
-		'orderby' => null,
-		'grid' => null,
-		'hide_expired' => null,
+		'template'      =>'grid',
+		'search'        => null,
+		'category'      => null,
+		'type'          => null,
+		'vendor'        => null,
+		'max'           => 20,
+		'orderby'       => null,
+		'grid'          => null,
+		'hide_expired'  => null,
 	), $atts ) );
 	
 	// Prepare options
 	$options = affpromos_get_options();
 	
 	// Default Query Arguments
+	$max = min($max,20);
+	$max = max(1,20);
 	$args = array(
-		'post_type' => 'affpromos_promotion',
-		'orderby' => 'modified',
-		'order' => 'DESC',
-		'posts_per_page' => $max,
+		'post_type'         => 'affpromos_promotion',
+		'orderby'           => 'modified',
+		'order'             => 'DESC',
+		'posts_per_page'    => $max,
 	
 	);
 	
@@ -62,17 +65,16 @@ function affpromos_add_promotions_shortcode( $atts, $content ) {
 			'relation' => 'OR',
 			// Until date not set yet
 			array(
-				'key' => AFFILIATE_PROMOTIONS_PREFIX . 'promotion_valid_until',
-				'compare' => 'NOT EXISTS', // works!
-				'type' => 'numeric',
-				//'value' => '', // This is ignored, but is necessary...
+				'key'       => AFFILIATE_PROMOTIONS_PREFIX . 'promotion_valid_until',
+				'compare'   => 'NOT EXISTS', // works!
+				'type'      => 'numeric',
 			),
 			// Already expired
 			array(
-				'key' => AFFILIATE_PROMOTIONS_PREFIX . 'promotion_valid_until',
-				'value' => intval(time()),
-				'compare' => '>',
-				'type' => 'numeric',
+				'key'       => AFFILIATE_PROMOTIONS_PREFIX . 'promotion_valid_until',
+				'value'     => intval(time()),
+				'compare'   => '>',
+				'type'      => 'numeric',
 			)
 		);
 	}
@@ -182,309 +184,9 @@ function affpromos_add_promotions_shortcode( $atts, $content ) {
 	return $str;
 }
 
-class Crawl_HTML_Offer {
-	
-	private $parser_callback = array(
-		'adayroi.com'           => 'crawl_site_adayroi',
-		'adayroi.vn'            => 'crawl_site_adayroi',
-		'deal.adayroi.com'      => 'crawl_site_adayroi_deal',
-		'tiki.vn'               => 'crawl_site_tiki',
-		'lazada.com'            => 'crawl_site_lazada',
-		'lazada.vn'             => 'crawl_site_lazada',
-	
-	);
-	
-	function open_site_conc($url)
-	{
-		$host = str_replace('www.','',parse_url($url)['host']);
-		$parser = $this->parser_callback;
-		
-		if(!isset($parser[$host]))
-		{
-			return array(
-				'error' => 'We are not support this site yet !'
-			);
-		}
-		$client = new Client();
-		
-		try {
-			
-			$response = $client->request('GET', $url, [
-				'allow_redirects' => true,
-				'protocols'  => ['http', 'https'],
-				'connect_timeout'=>20,
-				'headers' => [
-					'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.103 Safari/537.36',
-				]
-			]);
-			
-		} catch (ClientException $e) {
-			echo Psr7\str($e->getRequest());
-			echo Psr7\str($e->getResponse());
-			
-			return array(
-				'error' => 'url problem or connection loss !!',
-			);
-		}
-		
-		if ($response->getStatusCode() == 200) {
-			$dom = new DOMDocument();
-			$dom->preserveWhiteSpace = false;
-			$dom->validateOnParse = true;
-			$html = ($response->getBody(true)->getContents());
-			
-			$_html = str_get_html($html);
-			try{
-				
-				return call_user_func_array(array($this,$parser[$host]) ,array($_html,$url));
-			}catch (Error $e)
-			{
-				return array(
-					'error' => 'The format of this site is unnoticed ! Please wait for new update '
-				);
-			}
-		}
-		return array(
-			'error' => 'Connection status not success'
-		);
-		
-	}
-	
-	public function crawl_site_tiki($_html, $url)
-	{
-		
-		$_html = $_html->find('div[class=container]',4);
-		
-		if (empty($_html))
-		{
-			return array(
-				'error'=>'Site not supported !!'
-			);
-		}
-		
-		$title = $_html->find('h1[class=item-name]',0)->plaintext;
-		
-		$price_sale = intval($_html->find('p[id=p-specialprice]',0)->getAttribute('data-value'));
-		try{
-			$price = intval($_html->find('p[id=p-listpirce]',0)->getAttribute('data-value'));
-		}catch (Error $e){
-			$price = $price_sale;
-		}
-		$images = ($_html->find('*[data-zoom-image]'));
-		$image_url = strval($images[0]->getAttribute('data-zoom-image'));
-		
-		
-		if(count($images) > 2){
-			$thumbnail_url = strval($images[1]->children(0)->getAttribute('src'));
-		}else{
-			$thumbnail_url = $image_url;
-		}
-		
-		
-		$specs = strval($_html->find('div[class=product-table-box is-left]',0));
-//
-		$desc = strval($_html->find('div[class=product-content-box]',0));
-		
-		
-		try{
-			$short_desc = ($_html->find('div[class=top-feature-item]',0)->plaintext);
-			$short_desc = ($short_desc == null) ? '' : $short_desc;
-		}catch (Error $e){
-			$short_desc = '';
-		}
-		
-		$obj_offer = (object) array(
-			'title'                 => $title,
-			'thumbnail'             => $thumbnail_url,
-			'featured_image'        => $image_url,
-			'vendor'                => 'tiki.vn',
-			'url'                   => $url,
-			'desc'                  => $desc,
-			'short_desc'            => $short_desc,
-			'specs'                 => $specs,
-			'price'                 => intval($price),
-			'sale_price'            => intval($price_sale),
-			'start_timestamp'       => time(),
-			'expiration_timestamp'  => 99999999999,
-		);
-		
-		$id = insert_new_offer($obj_offer);
-		return array(
-			'offer_id' => $id
-		);
-		
-	}
-	
-	public function crawl_site_adayroi($_html, $url)
-	{
-		$_html = $_html->find('div[id=page_content_left]',0);
-		
-		if (empty($_html))
-		{
-			return array(
-				'error'=>'Site not supported !!'
-			);
-		}
-		$title = $_html->find('h1',0)->plaintext;
-		
-		$price = $_html->find('span[class=value original]',0)->plaintext;
-		$price = str_replace('.','',$price);
-		try{
-			$price_sale = $_html->find('.item-price',0);
-			$price_sale = str_replace($price_sale->children(0)->plaintext,'',$price_sale->plaintext);
-			$price_sale = str_replace('.','',$price_sale);
-		}catch (Error $e){
-			$price_sale = $price;
-		}
-		
-		$image_url = strval($_html->find('div[class=stage]',0)->children(0)->getAttribute('src'));
-		
-		$specs = $_html->find('div[id=tab_content_product_specifications]',0)->plaintext;
-		
-		$desc = strval($_html->find('div[id=tab_content_product_introduction]',0));
-		
-		$short_desc = strval($_html->find('div[id=product_excerpt]',0));
-		
-		try{
-			$thumnail_url = strval($_html->find('.thumbnails .items .item img',1)->getAttribute('src'));
-		}catch(Error $e){
-			$thumnail_url = $image_url;
-		}
-		$obj_offer = (object) array(
-			'title'                 => $title,
-			'thumbnail'             => $thumnail_url,
-			'featured_image'        => $image_url,
-			'vendor'                => 'adayroi.com',
-			'url'                   => $url,
-			'desc'                  => $desc,
-			'short_desc'            => $short_desc,
-			'specs'                 => $specs,
-			'price'                 => intval($price),
-			'sale_price'            => intval($price_sale),
-			'start_timestamp'       => time(),
-			'expiration_timestamp'  => 99999999999,
-		);
-		
-		$id = insert_new_offer($obj_offer);
-		return array(
-			'offer_id' => $id
-		);
-	}
-	
-	public function crawl_site_adayroi_deal($_html, $url)
-	{
-		$top_html = $_html->find('div[class=service_info]',0);
-		
-		if (empty($top_html))
-		{
-			return array(
-				'error'=>'Site not supported !!'
-			);
-		}
-		$title = $top_html->find('h1',0)->plaintext;
-		
-		$price = $top_html->find('div[class=item-original-price]',0)->plaintext;
-		$price = str_replace('.','',$price);
-		try{
-			$price_sale = $top_html->find('div[class=item-price]',0)->plaintext;
-			$price_sale = str_replace('.','',$price_sale);
-		}catch (Error $e){
-			$price_sale = $price;
-		}
-		
-		$image_url = strval($top_html->find('img[class=lazyOwl]',0)->getAttribute('data-src'));
-		
-		$short_desc = strval($_html->find('div[id=tab_content_service_conditions]',0));
-		
-		$desc = strval($_html->find('div[id=tab_content_service_descriptions]',0));
-		
-		$specs = $short_desc;
-		
-		try{
-			$thumnail_url = strval($top_html->find('img[class=lazyOwl]',1)->getAttribute('data-src'));
-		}catch (Error $e){
-			$thumnail_url = $image_url;
-		}
-		
-		$obj_offer = (object) array(
-			'title'                 => $title,
-			'thumbnail'             => $thumnail_url,
-			'featured_image'        => $image_url,
-			'vendor'                => 'adayroi.com',
-			'url'                   => $url,
-			'desc'                  => $desc,
-			'short_desc'            => $short_desc,
-			'specs'                 => $specs,
-			'price'                 => intval($price),
-			'sale_price'            => intval($price_sale),
-			'start_timestamp'       => time(),
-			'expiration_timestamp'  => 99999999999,
-		);
-		
-		$id = insert_new_offer($obj_offer);
-		return array(
-			'offer_id' => $id
-		);
-	}
-	
-	public function crawl_site_lazada($_html,$url){
-		
-		$_html = $_html->find('div[id=prd-detail-page]',0);
-		
-		$title = $_html->find('h1[id=prod_title]',0)->plaintext;
-		
-		$price_sale = $_html->find('span[id=product_price]',0)->plaintext;
-		
-		try{
-			$price = $_html->find('span[id=price_box]',0)->plaintext;
-			$price = str_replace(' VND','',$price);
-			$price = str_replace('.','',$price);
-		}catch (Error $e){
-			$price = $price_sale;
-		}
-		
-		$images = ($_html->find('*[data-big]'));
-		$image_url = strval($images[0] ->getAttribute('data-big'));
-		
-		if(count($images) > 2){
-			$thumbnail_url = strval($images[1] ->getAttribute('data-swap-image'));
-		}else{
-			$thumbnail_url = strval($images[0] ->getAttribute('data-swap-image'));
-		}
-		
-		$specs = strval($_html->find('div[class=product-description__inbox toclear]',0));
-		
-		$short_desc = strval($_html->find('div[class=prod_details]',0)->plaintext);
-		
-		$desc = strval($_html->find('div[id=productDetails]',0));
-		
-		
-		$obj_offer = (object) array(
-			'title'                 => $title,
-			'thumbnail'             => $thumbnail_url,
-			'featured_image'        => $image_url,
-			'vendor'                => 'lazada.vn',
-			'url'                   => $url,
-			'desc'                  => $desc,
-			'short_desc'            => $short_desc,
-			'specs'                 => $specs,
-			'price'                 => intval($price),
-			'sale_price'            => intval($price_sale),
-			'start_timestamp'       => time(),
-			'expiration_timestamp'  => 99999999999,
-		);
-		
-		$id = insert_new_offer($obj_offer);
-		
-		return array(
-			'offer_id' => $id
-		);
-	}
-	
-}
 
 function crawl_content ($url){
-	$offer = new Crawl_HTML_Offer();
+	$offer = new ProductCrawler();
 	return $offer->open_site_conc($url);
 }
 

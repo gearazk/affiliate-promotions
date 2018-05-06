@@ -3,13 +3,13 @@
  * Plugin Name:     Affiliate Promotions
  * Plugin URI:      https://wordpress.org/plugins/affiliate-tools-promotions/
  * Description:     Promote promotions and deals of products and earn money with affiliate referrals.
- * Version:         0.1.5
- * Author:          leduchuy89vn
- * Author URI:      https://khuyenmaimuasam.com
+ * Version:         0.1.6
+ * Author:          gearazk
+ * Author URI:      https://giaregiatot.vn
  * Text Domain:     affiliate-promotions
  *
  * @package         AffiliatePromotions
- * @author          Lê Đức Huy
+ * @author          Nix
  * @copyright       Copyright (c) leduchuy89vn
  *
  * Copyright (c) 2016 - flowdee ( https://twitter.com/leduchuy89vn )
@@ -72,7 +72,7 @@ if( ! class_exists( 'Affpromos_Plugin' ) ) {
             define( 'AFFILIATE_PROMOTIONS_AT_PREFIX', 'affpromos_accesstrade_' );
 
             // Plugin version
-            define( 'AFFILIATE_PROMOTIONS_VER', '0.1.1' );
+            define( 'AFFILIATE_PROMOTIONS_VER', '0.1.6' );
 
             // Plugin path
             define( 'AFFILIATE_PROMOTIONS_DIR', plugin_dir_path( __FILE__ ) );
@@ -84,7 +84,7 @@ if( ! class_exists( 'Affpromos_Plugin' ) ) {
             define( 'AFFILIATE_PROMOTIONS_PREFIX', 'affpromos_' );
 
             // Constant hours auto update (HOURS_PER_UPDATE)
-            define( 'AFFILIATE_AUTO_UPDATE_HOURS_PER_UPDATE', 1 );
+            define( 'AFFILIATE_AUTO_UPDATE_HOURS_PER_UPDATE', 3 );
 
             // Publisher homepage
             define( 'AFFILIATE_PROMOTIONS_HOMEPAGE', 'https://khuyenmaimuasam.com/affiliate/' );
@@ -113,7 +113,7 @@ if( ! class_exists( 'Affpromos_Plugin' ) ) {
          * Include necessary files
          *
          * @access      private
-         * @since       1.0.0
+         * @since       0.1.0
          * @return      void
          */
         private function includes() {
@@ -178,7 +178,7 @@ if( ! class_exists( 'Affpromos_Plugin' ) ) {
          * Internationalization
          *
          * @access      public
-         * @since       1.0.0
+         * @since       0.1.0
          * @return      void
          */
         public function load_textdomain() {

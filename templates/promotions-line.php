@@ -41,8 +41,11 @@
                                 <div class="right">
                                     <div class="right-inner">
                                         <div class="tags"> <span class="tag recommended code"><?php echo affpromos_the_promotion_vendor();?></span>
-                                            <div class="tag verified"> <i class="icon-valid"></i><span>Xác nhận</span> </div>
-                                            <div class="tag tag-hide validity"> <i class="icon-expiry"></i><span><?php echo affpromos_the_promotion_valid(); ?>  </span> </div>
+                                            <div class="tag verified">
+                                                <i class="fa fa-check-circle-o"></i><span>Xác nhận</span> </div>
+                                            <div class="tag tag-hide validity">
+                                                <i class="fa fa-clock-o"></i><span><?php echo affpromos_the_promotion_valid_text(); ?>  </span>
+                                            </div>
                                         </div>
                                         <div class="name">
                                             <a target="_blank" href="<?php echo affpromos_get_promotion_url(); ?>" rel="nofollow" >
@@ -69,7 +72,7 @@
                             <?php } ?>
 
                         </div>
-                        <div class="details-toggle"> <span> Chi tiết <i class="icon-arrow-down-blue"></i> </span> </div>
+                        <div class="details-toggle"> <span> Chi tiết <i class="fa fa-arrow-down"></i> </span> </div>
                         <div class="coupon-details hide-details">
 
                             <div class="holder">
