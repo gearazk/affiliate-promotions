@@ -4,7 +4,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 ?>
-<div class="offer_box coupon-padding type-code" >
+
+<div class="offer_box offer_box_<?php echo $promotion_per_row ?> coupon-padding " >
     <div class="offer_box-item" >
 
         <div class="promotion-img-wrapper">
@@ -48,16 +49,16 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="offer_footer">
 			<?php if (affpromos_get_promotion_code()){ ?>
                 <a href="<?php echo affpromos_get_promotion_url() ?>">
-                    <div class="btn button-code">
+                    <div class="affbtn button-code">
                         <div class="apla"></div>
                         <div class="btn-label">LẤY MÃ NGAY</div>
-                        <div class="corner"></div>
+                        <div class="corner" style="background:url(<?php echo AFFILIATE_PROMOTIONS_URL?>public/assets/assets/button-corner_red.png) left top no-repeat"></div>
                         <span class="in"><?php echo affpromos_get_promotion_code() ?></span>
                     </div>
                 </a>
 			<?php }else{ ?>
                 <a href="<?php echo affpromos_get_promotion_url() ?>">
-                    <button class="btn promo-btn"> XEM KHUYẾN MÃI </button>
+                    <button class="affbtn promo-btn"> XEM KHUYẾN MÃI </button>
                 </a>
 			<?php } ?>
         </div>

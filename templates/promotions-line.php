@@ -60,14 +60,14 @@
                             ?>
                                 <div class="action nocode">
                                     <a href="<?php echo affpromos_get_promotion_url(); ?>" rel="nofollow" >
-                                        <span class="button nocode">Nhận ưu đãi<i class="icon-call-action"></i></span> </a>
+                                        <span class="button nocode">NHẬN KHUYẾN MÃI<i class="icon-call-action"></i></span> </a>
                                 </div>
                             <?php }else{
                                     $code = substr($code,-3);
                                     ?>
                                 <div class="action orange">
                                     <a class="flip-button flip-main flip-block flip-effect open-tab" data-idoffer="<?php echo get_the_ID() ?>"  href="<?php echo affpromos_get_promotion_url(); ?>" rel="nofollow" >
-                                        <div class="label"> <span><?php echo $code ?></span> </div> <span class="button">Mã Coupon</span> </a>
+                                        <div class="label"> <span><?php echo $code ?></span> </div> <span class="button">MÃ GIẢM GIÁ</span> </a>
                                 </div>
                             <?php } ?>
 
@@ -88,13 +88,13 @@
                                     ?>
                                     <div class="action nocode">
                                         <a href="<?php echo affpromos_get_promotion_url(); ?>" rel="nofollow" >
-                                            <span class="button nocode">Nhận ưu đãi<i class="icon-call-action"></i></span> </a>
+                                            <span class="button nocode">NHẬN KHUYẾN MÃI<i class="icon-call-action"></i></span> </a>
                                     </div>
                                 <?php }else{
                                     ?>
                                     <div class="action orange">
                                         <a class="flip-button flip-main flip-block flip-effect open-tab" data-idoffer="<?php echo get_the_ID() ?>" href="<?php echo affpromos_get_promotion_url(); ?>" rel="nofollow" >
-                                            <div class="label"> <span><?php echo $code ?></span> </div> <span class="button">Mã Coupon</span> </a>
+                                            <div class="label"> <span><?php echo $code ?></span> </div> <span class="button">MÃ GIẢM GIÁ</span> </a>
                                     </div>
                                 <?php } ?>
                             </div>

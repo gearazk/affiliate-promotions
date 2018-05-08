@@ -1,5 +1,15 @@
 /*! CSS Used from: Embedded */
 /*#f9601e*/
+.affpromos_promotions-carousel-wrap{
+    padding: 10px;
+}
+.affpromos_latest_promotions_widget:after{
+    content: ".";
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+}
 .affpromos_latest_promotions_widget{
     background-color:#e6e9ec ;
 }
@@ -16,28 +26,15 @@
     vertical-align: middle;
 }
 .promotion-img-wrapper{
-    height: 150px;
+    height: 190px;
     white-space: nowrap;
     text-align: center;
 }
-.offer_row-4{position:relative;min-height:1px;float:left;width:100%;}
-.btn{background-image:none;padding:6px 12px;font-size:14px;line-height:1.42857;}
-@media (min-width:768px){
-    .offer_row-4{float:left;width:50%;}
-}
-@media (min-width:992px){
-    .offer_row-4{float:left;width:33.33333%;}
-}
-@media (min-width:1200px){
-    .offer_row-4{float:left;width:25%;}
-}
-.btn{display:inline-block;margin-bottom:0;font-weight:400;text-align:center;vertical-align:middle;touch-action:manipulation;border:1px solid transparent;white-space:nowrap;border-radius:3px;}
 .clearfix:after,.clearfix:before{content:" ";display:table;}
 .button-code{position:relative;border-radius:4px 0 0 4px;margin:10px 0 0;height:40px;width:100%;display:block !important;font-weight:900;}
 .button-code .apla,.button-code .btn-label{text-align:center;height:100%;position:absolute;top:0;}
 .button-code .apla{background:#e5161e;left:0;width:100%;width:calc(100% - 22px);z-index:2;border-radius:4px 0 0 4px!important;display:block;}
 .button-code .btn-label{color:#fff;font:400 normal 13px roboto-regular,"Helvetica Neue",Helvetica,Arial,sans-serif;line-height:40px;width:100%;left:-5px;z-index:4;font-weight:900;}
-.button-code .corner{background:url(https://www.picodi.com/vn/https%5C3A%20%5C2F%20%5C2F%20cdn2%5C2E%20picodi%5C2E%20com%5C2F%20vn%5C2F%20bundles/view/img/button-corner_s_red.png) left top no-repeat;background-size:100% auto;position:absolute;z-index:15;height:40px;right:1px;width:26px;top:0;}
 .button-code .in{border:1px solid #f1f3f5;position:absolute;top:0;left:0!important;border-radius:4px;text-align:right;padding:0 10px;width:100%;height:100%;line-height:40px;z-index:1;color:#868e96;}
 @media only screen and (min-width:992px){
     .button-code{margin:0;}
@@ -52,18 +49,10 @@
 .offer_box-item .icons_percent{border:1px dashed #ff7e31;position:relative;}
 .offer_box-item .icons_percent i{font-family:FontAwesome;position:absolute;color:#ff7e31;font-size:15px;top:-10px;left:5px;}
 .offer_box-item .icons_percent p{color:#ff7e31;font:400 normal 16px roboto-regular,"Helvetica Neue",Helvetica,Arial,sans-serif;padding:5px;margin:0;min-width:60px;text-align:center;}
-.offer_box-item ul{list-style:none;display:block;padding-left:0;max-width:80%;float:right;margin-top:10px;}
+.offer_box-item ul{list-style:none;                                                                   :block;padding-left:0;max-width:80%;float:right;margin-top:10px;}
 .offer_box-item ul li{display:block;text-align:right;}
 .offer_box-item ul li .time,.offer_box-item ul li p{font-size:11px;margin-bottom:0;}
 .offer_box-item ul li .time i{margin-right:3px;}
-@media only screen and (min-width:1200px){
-    .offer_row-4 .offer_box-item{min-height:278px;}
-}
-.offer_row-4 .title{margin-bottom:5px;height:40px;}
-.offer_row-4 .title h3{font-size:16px;}
-@media only screen and (min-width:768px){
-    .offer_row-4 .info{min-height:86px;}
-}
 .card_item_more{position:absolute;top:10px;right:15px;z-index:12;}
 @media only screen and (min-width:1200px){
     .offer_box-item{min-height:230px;}
@@ -73,10 +62,9 @@
 
 }
 
-.btn{display:inline-block;margin-bottom:0;font-weight:400;text-align:center;vertical-align:middle;touch-action:manipulation;cursor:pointer;background-image:none;border:1px solid transparent;white-space:nowrap;padding:6px 12px;font-size:14px;line-height:1.42857;border-radius:3px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
-.btn:active:focus,.btn:focus{outline:5px auto -webkit-focus-ring-color;outline-offset:-2px;}
-.btn:focus,.btn:hover{color:#333;text-decoration:none;}
-.btn:active{outline:0;background-image:none;-webkit-box-shadow:inset 0 3px 5px rgba(0,0,0,.125);box-shadow:inset 0 3px 5px rgba(0,0,0,.125);}
+.affbtn:active:focus,.affbtn:focus{outline:5px auto -webkit-focus-ring-color;outline-offset:-2px;}
+.affbtn:focus,.affbtn:hover{color:#333;text-decoration:none;}
+.affbtn:active{outline:0;background-image:none;-webkit-box-shadow:inset 0 3px 5px rgba(0,0,0,.125);box-shadow:inset 0 3px 5px rgba(0,0,0,.125);}
 .clearfix:after,.clearfix:before{content:" ";display:table;}
 .clearfix:after{clear:both;}
 @media (max-width:767px){
@@ -92,7 +80,7 @@
 .button-code:hover .corner{right:18px;}
 .button-code .apla{background:#e5161e;position:absolute;left:0;top:0;text-align:center;width:100%;width:calc(100% - 22px);height:100%;z-index:2;border-radius:4px 0 0 4px!important;display:block;transition:width .2s,transform .2s;}
 .button-code .btn-label{color:#fff;font:400 normal 13px roboto-regular,"Helvetica Neue",Helvetica,Arial,sans-serif;text-align:center;line-height:40px;height:100%;width:100%;position:absolute;top:0;left:-5px;z-index:4;font-weight:900;}
-.button-code .corner{background:url(https://cdn2.picodi.com/vn/bundles/view/img/button-corner_s_red.png) left top no-repeat;background-size:100% auto;position:absolute;z-index:15;height:40px;right:1px;width:26px;top:0;transition:right .2s,transform .2s;}
+.button-code .corner{background-size:100% auto;position:absolute;z-index:15;height:40px;right:1px;width:26px;top:0;transition:right .2s,transform .2s;}
 .button-code .in{border:solid 1px #f1f3f5;position:absolute;top:0;left:0!important;border-radius:4px;text-align:right;padding:0 10px;width:100%;height:100%;line-height:40px;z-index:1;color:#868e96;}
 @media only screen and (min-width:992px){
     .button-code{margin:0;}
@@ -105,13 +93,13 @@
 .offer_box-item figure img{width:auto;max-height:35px;font-size:10px;color:#fff;}
 .offer_box-item .title{display:block;max-width:100%;min-height:50px;padding:0 10px;}
 @media only screen and (min-width:768px){
-    .offer_row-4 .info{min-height:86px;}
     .offer_box{min-height:258px; width: 50%}
 }
 @media only screen and (min-width:992px){
     .offer_box-item .title{max-width:90%;}
-    .offer_box{min-height:258px; width: 25%}
-
+    .offer_box{min-height:258px;}
+    .offer_box_3{min-height:258px; width: 33%}
+    .offer_box_4{min-height:258px; width: 25%}
 }
 .offer_box-item .title h3{margin-bottom:0;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;display:-moz-webkit-box;-moz-webkit-line-clamp:2;-moz-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;margin-top:5px;font-size:16px;}
 .offer_box-item .title h3 a{color:#000;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-height:50px;}
@@ -126,14 +114,9 @@
 .offer_box-item ul li{line-height:1em!important;display:block;text-align:right;}
 .offer_box-item ul li .time,.offer_box-item ul li p{line-height:1em!important;font-size:15px;margin-bottom:0;}
 .offer_box-item ul li .time i{margin-right:3px;}
-@media only screen and (min-width:1200px){
-    .offer_row-4 .offer_box-item{min-height:278px;}
-}
-.offer_row-4 .title{margin-bottom:5px;height:40px;}
-.offer_row-4 .title h3{font-size:16px;}
 
 .offer_footer{margin-top: 10px;padding: 15px 0;position: relative;border-top: 2px dashed #bababa;}
-.offer_footer .btn{margin:0 auto;max-width:80%;}
+.offer_footer .affbtn{margin:0 auto;max-width:80%;display: block}
 .offer_footer:after{content:"";width:10px;height:18px;background:#e6e9ec;position:absolute;top:-9px;right:-2px;bottom:auto;border-radius:18px 0 0 18px;border-top:solid #e6e9ec 2px;border-left:solid #e6e9ec 1px;}
 .offer_footer:before{content:"";width:10px;height:18px;background:#e6e9ec;position:absolute;top:-9px;left:-2px;border-radius:0 18px 18px 0;border-top:solid #e6e9ec 2px;border-right:solid #e6e9ec 1px;}
 .card_item_more{position:absolute;top:10px;right:15px;cursor:pointer;z-index:12;}
@@ -151,8 +134,8 @@
 }
 
 
-.btn{background-image:none;padding:6px 12px;font-size:14px;line-height:1.42857;}
-.btn{display:inline-block;margin-bottom:0;font-weight:400;text-align:center;vertical-align:middle;touch-action:manipulation;border:1px solid transparent;white-space:nowrap;border-radius:3px;}
+.affbtn{background-image:none;padding:6px 12px;font-size:14px;line-height:1.42857;}
+.affbtn{display:inline-block;margin-bottom:0;font-weight:400;text-align:center;vertical-align:middle;touch-action:manipulation;border:1px solid transparent;white-space:nowrap;border-radius:3px;}
 .promo-btn{color:#fff;font:400 normal 13px roboto-regular,"Helvetica Neue",Helvetica,Arial,sans-serif;background-color: #e5161e;display:block;margin:1px auto;position:relative;font-weight:900;height:40px;width:100%;}
 .promo-btn:hover{color:#fff;background-color:#b61218;border-color:#a41015;}
 .aff_vendor-logo{
@@ -160,6 +143,8 @@
     margin-bottom: 25px;
 }
 .aff_vendor-logo img{
+    background-color: #ebebeb;
+
     height: 40px;
     display: block;
     margin: auto;

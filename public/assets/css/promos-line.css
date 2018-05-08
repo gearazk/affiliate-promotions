@@ -74,8 +74,7 @@ input[type=radio] {
 
 
 .coupon .action {
-    padding-bottom: 5px!important;
-    padding: 0 10px
+    /*padding: 0 10px*/
 }
 
 .coupon .action span {
@@ -88,7 +87,6 @@ input[type=radio] {
         vertical-align: middle;
         width: 150px
     }
-    .coupon .action span {}
 }
 
 .coupon .button {
@@ -96,6 +94,7 @@ input[type=radio] {
     width: 190px;
     height: 35px;
     padding-left: 8px;
+
     line-height: 32px;
     text-align: left;
     color: #fff;
@@ -488,8 +487,8 @@ input[type=radio] {
 }
 
 .coupon-store .store-coupon-list .item .inner .right .right-inner .tags .tag>span {
-    vertical-align: top;
-    padding: 0 0 0 5px
+    vertical-align: middle;
+    padding-left: 3px;
 }
 
 .coupon-store .store-coupon-list .item .inner .right .right-inner .name {

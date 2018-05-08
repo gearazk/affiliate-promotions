@@ -126,7 +126,6 @@ if ( ! class_exists('AccessTrade_Api') ) {
 			$meta_id_name = AFFILIATE_PROMOTIONS_PREFIX .'promotion_id';
 			$meta_id = AFFILIATE_PROMOTIONS_AT_PREFIX .$promotions->id;
 			$post_id = $wpdb->get_var( "SELECT * FROM $wpdb->postmeta WHERE (meta_key = '{$meta_id_name}' and meta_value = '{$meta_id}' );");
-			var_dump($promotions);
 			
 			
 			if ($post_id !== null){
@@ -140,7 +139,7 @@ if ( ! class_exists('AccessTrade_Api') ) {
 				'post_status'   =>      "publish",
 				'post_content'  =>      $promotions->content,
 				'post_type'     =>      $post_type,
-			),true);
+			));
 			
 			AccessTrade_Api::add_feature_image_to_post($promotions->image,$post_id);
 			

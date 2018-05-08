@@ -54,7 +54,13 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 			
 			$promotion_vendor   = ! empty( $instance['promotion_vendor'] ) ? $instance['promotion_vendor'] : '';
 			
-			$promotion_count    = ! empty( $instance['promotion_count'] ) ? $instance['promotion_count'] : 6;
+			$promotion_count    = ! empty( $instance['promotion_count'] ) ? $instance['promotion_count'] : 8;
+			
+			$promotion_per_row  = ! empty( $instance['promotion_per_row'] ) ? $instance['promotion_per_row'] : 4;
+			
+			if ( !in_array( $promotion_per_row, array(3,4)) ){
+				$promotion_per_row = 4;
+            }
 			
 			echo $args['before_widget']; ?>
 
@@ -109,7 +115,7 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 					'meta_query'          => $meta_query,
 					'no_found_rows'       => true,
 					'orderby'             => array(
-						'date'  => 'DESC'
+						'modified'  => 'DESC'
 					)
 				);
 				
@@ -144,6 +150,7 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 			$instance['promotion_category'] = absint( $new_instance['promotion_category'] );
 			$instance['promotion_vendor'] 	= sanitize_text_field( $new_instance['promotion_vendor'] );
 			$instance['promotion_count']  	= absint( $new_instance['promotion_count'] );
+			$instance['promotion_per_row']  = absint( $new_instance['promotion_per_row'] );
 			
 			return $instance;
 		}
@@ -155,6 +162,7 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 				'promotion_category' 	=> '',
 				'promotion_vendor'      => '',
 				'promotion_count'       => 8,
+				'promotion_per_row'     => 4,
 			) );
 			?>
             <p>
@@ -192,6 +200,25 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 						'selected' => esc_attr( $instance['promotion_vendor'] ),
 					)
 				);
+				?>
+            </p>
+
+            <p>
+                <label for="<?php echo esc_attr( $this->get_field_id( 'promotion_per_row' ) ); ?>">
+                    <strong><?php _e( 'Promotion each rows:', AFFILIATE_PROMOTIONS_PLUG ); ?></strong>
+                </label>
+				<?php
+				
+				$output = "<select name='" . esc_attr( $this->get_field_name( 'promotion_per_row' ) ) . "' id='" . esc_attr( $this->get_field_id( 'promotion_per_row' ) ) . "' class='widefat'>\n";
+				
+				$choices = array(3,4);
+				foreach ( $choices as $choice ) {
+					$output .= '<option value="' . esc_attr( $choice ) . '" ';
+					$output .= selected( $instance['promotion_per_row'], $choice, false );
+					$output .= '>' . esc_html( $choice ) .__(' each row',AFFILIATE_PROMOTIONS_PLUG). '</option>\n';
+				}
+				$output .= "</select>\n";
+				echo $output;
 				?>
             </p>
 
