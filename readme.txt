@@ -1,8 +1,8 @@
 === Affiliate Promotions ===
-Contributors: leduchuy89vn, gearazk
-Tags: affiliate, affiliates, promotion, promotions, deals, affiliate promotion, affiliate promotions, affiliate deals, dealz, vendors
+Contributors: gearazk, leduchuy89vn
+Tags: accesstrade, affiliate, affiliates, promotion, promotions, deals, affiliate promotion, affiliate promotions, affiliate deals, dealz, vendors
 Requires at least: 3.0.1
-Tested up to: 4.7.3
+Tested up to: 4.9.5
 Stable tag: 0.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -89,6 +89,12 @@ Yes of course.
 = Version 0.1.3 (2nd May 2017) =
 * Add search field for offers shortcode
 
+= Version 0.1.6 (11th May 2018) =
+* Thay đổi nguồn update từ CSDL của các nên tảng affiliate marketing Việt Nam (AccessTrade,...)
+* Sửa lỗi CSS ở một số template shortcode
+* Thêm widget cho hiện thị các khuyến mãi mới nhất
+* (Còn rất nhiều... nhưng cho có thời gian sửa :(( )
+
 == Upgrade Notice ==
 
 = Version 0.1.4, 0.1.5 (4 Jun 2017) =
@@ -112,6 +118,7 @@ Yes of course.
 
 1. Trang dashboard thống kê lượng tin khuyến mãi, mã giảm giá hiện đang còn hạn xử dụng.
 2. Shortcode hiển thị mã giảm giá.
+3. Widget hiển thị các khuyến mãi mới nhất
 3. Shortcode hiển thị một sản phẩm.
-4. Shortcode hiển thị danh sách tin khuyến mãi, mã giảm giá được lấy từ CSDL của Khuyến Mãi Mua Sắm.
+4. Shortcode hiển thị danh sách tin khuyến mãi, mã giảm giá được lấy từ CSDL của các nên tảng affiliate uy tính tại Việt Nam.
 
