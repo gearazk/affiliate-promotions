@@ -46,6 +46,6 @@ function add_task_to_schedule($task,$schedule_name) {
 
 
 $CRON_UPDATE_ALL_NAME = AFFILIATE_PROMOTIONS_PREFIX.'cron_update_all';
-init_routine_check($CRON_UPDATE_ALL_NAME);
 add_task_to_schedule('schedule_full_update',$CRON_UPDATE_ALL_NAME);
+init_routine_check($CRON_UPDATE_ALL_NAME);
 

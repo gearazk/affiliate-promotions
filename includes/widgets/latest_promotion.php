@@ -81,7 +81,7 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 					$tax_query[] = array(
 						'taxonomy' => $this->post_category_term,
 						'field'    => 'id',
-						'terms'    => absint( $promotion_category ),
+						'terms'    => array(absint( $promotion_category )),
 						'operator' => 'IN',
 					);
 					
@@ -146,9 +146,11 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 		
 		function update( $new_instance, $old_instance ) {
 			$instance = $old_instance;
+			
+
 			$instance['title']          	= sanitize_text_field( $new_instance['title'] );
 			$instance['promotion_category'] = absint( $new_instance['promotion_category'] );
-			$instance['promotion_vendor'] 	= sanitize_text_field( $new_instance['promotion_vendor'] );
+			$instance['promotion_vendor'] 	= esc_sql( $new_instance['promotion_vendor'] );
 			$instance['promotion_count']  	= absint( $new_instance['promotion_count'] );
 			$instance['promotion_per_row']  = absint( $new_instance['promotion_per_row'] );
 			
@@ -194,6 +196,8 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
                     <strong><?php _e( 'Promotion vendor:', AFFILIATE_PROMOTIONS_PLUG ); ?></strong>
                 </label>
 				<?php
+    
+    
 				$this->dropdown_promotion_vendor( array(
 						'id'       => $this->get_field_id( 'promotion_vendor' ),
 						'name'     => $this->get_field_name( 'promotion_vendor' ),
@@ -233,16 +237,8 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 		}
 		
 		function dropdown_promotion_vendor( $args ) {
-			$defaults = array(
-				'id'       => '',
-				'class'    => 'widefat',
-				'name'     => '',
-				'selected' => 0,
-			);
-			
-			$r = wp_parse_args( $args, $defaults );
-			$output = '';
-			
+      
+   
 			$vendors = get_posts([
 				'post_type'     => AFFILIATE_PROMOTIONS_PREFIX.'vendor',
 				'post_status'   => 'publish',
@@ -250,22 +246,16 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 				'order'         => 'ASC',
 				'orderby'       => 'title'
 			]);
+			$args['_func_map'] = function ($vendor){
+			    return (object) array(
+			            'value' => $vendor->ID,
+			            'text'  => ucfirst($vendor->post_title),
+                );
+            };
 			
-			
-			if ( ! empty( $vendors ) ) {
-				$output = "<select name='" . esc_attr( $r['name'] ) . "' id='" . esc_attr( $r['id'] ) . "' class='" . esc_attr( $r['class'] ) . "'>\n";
-				$output .= '<option value="' . esc_attr( 0 ) . '" ';
-				$output .= selected( $r['selected'],0 , false );
-				$output .= '>' . esc_html( __('All Vendors',AFFILIATE_PROMOTIONS_PLUG) ) . '</option>\n';
-				foreach ( $vendors as $vendor ) {
-					$output .= '<option value="' . esc_attr( $vendor->ID ) . '" ';
-					$output .= selected( $r['selected'], $vendor->ID, false );
-					$output .= '>' . esc_html( $vendor->post_title ) . '</option>\n';
-				}
-				$output .= "</select>\n";
-			}
-			
-			echo $output;
+			$args['placeholder'] = __('Select Vendors',AFFILIATE_PROMOTIONS_PLUG);
+			affpromos_dropdown_multi_select_render($args,$vendors);
+
 		}
 		
 	}

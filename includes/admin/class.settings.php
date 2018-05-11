@@ -12,7 +12,6 @@
 if (!defined('ABSPATH')) exit;
 
 require_once AFFILIATE_PROMOTIONS_DIR . 'includes/admin/ajax-functions.php';
-require_once AFFILIATE_PROMOTIONS_DIR . 'includes/admin/update.php';
 
 if ( ! class_exists('Affpromos_Settings') ) {
 	
@@ -269,11 +268,19 @@ if ( ! class_exists('Affpromos_Settings') ) {
 		
 		function sync_full_fields_render() {
 			SyncAjax::ajax_sync_full_trigger_render();
-			?>
+			$last_auto = get_option(AFFILIATE_PROMOTIONS_PREFIX.'last_full_update_timestamp') ;
+            if ($last_auto)
+	            $last_auto = date("d F Y H:i:s", $last_auto);
+            else
+	            $last_auto = 'Not yet';
+            ?>
             <p>
                 - <?php _e('Sync vendors, promotions, offers in that order',AFFILIATE_PROMOTIONS_PLUG)?><br>
                 - <?php _e('All settings saved in each section will be used',AFFILIATE_PROMOTIONS_PLUG)?><br>
                 * <?php _e('Should only be used when you have time to waste or just lazy or whenever you want',AFFILIATE_PROMOTIONS_PLUG)?>
+                <br>
+                <br>
+                * Last auto update: <?php echo $last_auto ?>
             </p>
             <?php
 		}

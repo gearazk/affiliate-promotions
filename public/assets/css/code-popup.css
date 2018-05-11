@@ -1,41 +1,4 @@
-a {
-    text-decoration: none;
-}
 
-a {
-    cursor: pointer;
-}
-
-a,
-a:active,
-a:hover {
-    outline: 0px;
-}
-
-img {
-    border: 0px;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-div,
-span {
-    margin: 0px;
-    padding: 0px;
-    font-size: 13px;
-    font-weight: 400;
-    font-family: "Noto Sans", "Noto Sans Thai", sans-serif;
-}
-
-a {
-    color: #333;
-}
-
-img {
-    border: none;
-}
 
 .popup {
     position: fixed;

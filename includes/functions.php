@@ -11,6 +11,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+
+
+function affpromos_dropdown_multi_select_render( $args , $choices) {
+	
+	$defaults = array(
+		'id'            => '',
+		'class'         => 'widefat',
+		'name'          => '',
+		'selected'      => 0,
+		'placeholder'   => __('Select a choice',AFFILIATE_PROMOTIONS_PLUG),
+		'_func_map'     => function($choice){
+			return (object) array(
+				'value' => $choice->value,
+				'text'  => $choice->text
+			);
+		},
+	);
+	
+	$r = wp_parse_args( $args, $defaults );
+	$output = '';
+	
+	if ( ! empty( $choices ) ) {
+		$output = "<select data-placeholder='".$r['placeholder']."' style='width:100%' multiple='multiple' name='" . esc_attr( $r['name'] ) . "[]' id='" . esc_attr( $r['id'] ) . "' class='" . esc_attr( $r['class'] ) . " aff_multiselect'>\n";
+		foreach ( $choices as $choice ) {
+			$choice = $r['_func_map']($choice);
+			$output .= '<option value="' . esc_attr( $choice->value ) . '" ';
+			$output .= in_array($choice->value,$r['selected']) ? 'selected' :'';
+			$output .= selected( $r['selected'], $choice->value, false );
+			$output .= '>' . esc_html( $choice->text ) . '</option>\n';
+		}
+		$output .= "</select>\n";
+	}
+	echo $output;
+	
+	
+	if (!wp_style_is(AFFILIATE_PROMOTIONS_PREFIX.'multiselect','queue'))
+		wp_enqueue_style( AFFILIATE_PROMOTIONS_PREFIX.'multiselect', AFFILIATE_PROMOTIONS_URL.'public/assets/select2/select2.min.css' );
+	
+	if (!wp_script_is(AFFILIATE_PROMOTIONS_PREFIX.'multiselect','queue'))
+		wp_enqueue_script( AFFILIATE_PROMOTIONS_PREFIX.'multiselect', AFFILIATE_PROMOTIONS_URL.'public/assets/select2/select2.min.js' );
+	
+	if (!wp_script_is(AFFILIATE_PROMOTIONS_PREFIX.'multiselect_selector','queue'))
+		wp_enqueue_script( AFFILIATE_PROMOTIONS_PREFIX.'multiselect_selector', AFFILIATE_PROMOTIONS_URL.'public/assets/select2/select2_selector.js' );
+}
+
 /*
  * Get content from a single post
  */
@@ -180,3 +225,4 @@ function affpromos_set_thumbnail($image_url,$post_id){
 	set_post_thumbnail($post_id,$image_id);
 	return $image_id;
 }
+

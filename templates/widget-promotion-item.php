@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div class="offer_box-item" >
 
         <div class="promotion-img-wrapper">
-            <img class="lozad visible" src="<?php the_post_thumbnail_url() ?>" alt="Lotte danh sách mã giảm giá" title="Lotte danh sách mã khuyến mãi">
+            <img class="lozad visible" src="<?php the_post_thumbnail_url() ?>" alt="<?php the_title() ?>" title="<?php the_title() ?>">
             <span class="imghelper"></span>
         </div>
         <div class="aff_vendor-logo">
