@@ -31,13 +31,12 @@ function affpromos_dropdown_multi_select_render( $args , $choices) {
 	
 	$r = wp_parse_args( $args, $defaults );
 	$output = '';
-	
 	if ( ! empty( $choices ) ) {
 		$output = "<select data-placeholder='".$r['placeholder']."' style='width:100%' multiple='multiple' name='" . esc_attr( $r['name'] ) . "[]' id='" . esc_attr( $r['id'] ) . "' class='" . esc_attr( $r['class'] ) . " aff_multiselect'>\n";
 		foreach ( $choices as $choice ) {
 			$choice = $r['_func_map']($choice);
 			$output .= '<option value="' . esc_attr( $choice->value ) . '" ';
-			$output .= in_array($choice->value,$r['selected']) ? 'selected' :'';
+			$output .= in_array($choice->value, $r['selected'] ) ? 'selected' :'';
 			$output .= selected( $r['selected'], $choice->value, false );
 			$output .= '>' . esc_html( $choice->text ) . '</option>\n';
 		}

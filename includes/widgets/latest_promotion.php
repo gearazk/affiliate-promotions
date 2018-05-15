@@ -197,11 +197,10 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
                 </label>
 				<?php
     
-    
 				$this->dropdown_promotion_vendor( array(
 						'id'       => $this->get_field_id( 'promotion_vendor' ),
 						'name'     => $this->get_field_name( 'promotion_vendor' ),
-						'selected' => esc_attr( $instance['promotion_vendor'] ),
+						'selected' => $instance['promotion_vendor'] ,
 					)
 				);
 				?>
