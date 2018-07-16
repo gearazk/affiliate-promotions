@@ -10,15 +10,14 @@ if (!class_exists('SyncAjax')){
 		
 		public static function ajax_sync_background_render(){
 			
-			
 			# Check if the auto update switch is on ?
 			$update_now = get_option(AFFILIATE_AUTO_UPDATE_SWITCH, false);
 			if (!$update_now)
 				return;
+			
 			# Check should we trigger at this time
 			$last_auto = get_option(AFFILIATE_PROMOTIONS_PREFIX.'last_full_update_timestamp') ;
 			$should_update = $last_auto != false ? time() - $last_auto >= AFFILIATE_AUTO_UPDATE_HOURS_PER_UPDATE * 3600  : false;
-			$should_update = true;
 			if (!$should_update)
 				return;
 			
