@@ -5,7 +5,6 @@ if ( ! class_exists('AccessTrade_Api') ) {
 	
 	class AccessTrade_Api {
 	 
-		
 		public function __construct($opt=null) {
 		    
 		    if (!isset($opt))
@@ -44,7 +43,11 @@ if ( ! class_exists('AccessTrade_Api') ) {
 			
 		}
 		
-		public function run_full_update() {
+		public static function run_full_update() {
+            $_self = new self();
+            $_self->_run_full_update();
+        }
+		public function _run_full_update() {
 			$this->sync_vendors_with_local();
 			$this->sync_promotions_with_local();
 			$this->sync_offers_with_local();

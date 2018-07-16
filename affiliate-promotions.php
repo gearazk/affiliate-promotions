@@ -85,7 +85,10 @@ if( ! class_exists( 'Affpromos_Plugin' ) ) {
 
             // Constant hours auto update (HOURS_PER_UPDATE)
             define( 'AFFILIATE_AUTO_UPDATE_HOURS_PER_UPDATE', 3 );
-
+	
+	        // Constant hours auto update (HOURS_PER_UPDATE)
+	        define( 'AFFILIATE_AUTO_UPDATE_SWITCH', AFFILIATE_PROMOTIONS_PREFIX. 'auto_update_switch' );
+	        
             // Publisher homepage
             define( 'AFFILIATE_PROMOTIONS_HOMEPAGE', 'https://khuyenmaimuasam.com/affiliate/' );
             

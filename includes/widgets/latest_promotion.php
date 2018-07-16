@@ -92,7 +92,7 @@ if ( ! class_exists( 'Aff_Latest_Promotion_Widget' ) ) :
 						'relation' => 'IN',
 						array(
 							'key'   => AFFILIATE_PROMOTIONS_PREFIX.'promotion_vendor',
-							'value' => array($promotion_vendor),
+							'value' => ($promotion_vendor),
 						),
 					);
 				}

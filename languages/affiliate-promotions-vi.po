@@ -31,7 +31,7 @@ msgstr ""
 
 #: includes/admin/class.settings.php:137
 msgid "Create vendors"
-msgstr "Tạo nhà cung cấp"
+msgstr ""
 
 #: includes/admin/class.settings.php:138
 msgid "Create promotions"

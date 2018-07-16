@@ -269,10 +269,8 @@ if ( ! class_exists('Affpromos_Settings') ) {
 		function sync_full_fields_render() {
 			SyncAjax::ajax_sync_full_trigger_render();
 			$last_auto = get_option(AFFILIATE_PROMOTIONS_PREFIX.'last_full_update_timestamp') ;
-            if ($last_auto)
-	            $last_auto = date("d F Y H:i:s", $last_auto);
-            else
-	            $last_auto = 'Not yet';
+			
+			$last_auto = isset($last_auto) ? date("d F Y H:i:s", $last_auto) : __('Not yet', AFFILIATE_PROMOTIONS_PLUG);
             ?>
             <p>
                 - <?php _e('Sync vendors, promotions, offers in that order',AFFILIATE_PROMOTIONS_PLUG)?><br>
@@ -281,8 +279,10 @@ if ( ! class_exists('Affpromos_Settings') ) {
                 <br>
                 <br>
                 * Last auto update: <?php echo $last_auto ?>
+
             </p>
             <?php
+			
 		}
 		
 		function promotion_aff_token_at_render() {

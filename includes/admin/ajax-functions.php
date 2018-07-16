@@ -8,6 +8,40 @@ if (!class_exists('SyncAjax')){
 		public static $AJAX_SYNC_PROMOTION_TRIGGER_ID   = AFFILIATE_PROMOTIONS_PREFIX.'sync_promotion_trigger';
 		public static $AJAX_SYNC_FULL_TRIGGER_ID        = AFFILIATE_PROMOTIONS_PREFIX.'sync_full_trigger';
 		
+		public static function ajax_sync_background_render(){
+			
+			
+			# Check if the auto update switch is on ?
+			$update_now = get_option(AFFILIATE_AUTO_UPDATE_SWITCH, false);
+			if (!$update_now)
+				return;
+			# Check should we trigger at this time
+			$last_auto = get_option(AFFILIATE_PROMOTIONS_PREFIX.'last_full_update_timestamp') ;
+			$should_update = $last_auto != false ? time() - $last_auto >= AFFILIATE_AUTO_UPDATE_HOURS_PER_UPDATE * 3600  : false;
+			$should_update = true;
+			if (!$should_update)
+				return;
+			
+			# Reset values for the next update
+			update_option(AFFILIATE_PROMOTIONS_PREFIX . 'last_full_update_timestamp', time());
+			update_option(AFFILIATE_AUTO_UPDATE_SWITCH, false);
+
+			# only update full
+			$ajax_action = SyncAjax::$AJAX_SYNC_FULL_TRIGGER_ID . '_ajax_action';
+			
+			?>
+            <script>
+
+                window.onload = function(){
+                    var $ = jQuery.noConflict();
+                    var data = {
+                        action: '<?php echo $ajax_action ?>'
+                    };
+                    $.post(ajaxurl, data )
+                }
+            </script>
+			<?php
+		}
 		public static function ajax_sync_trigger_render($trigger_id,$btn_trigger_text,$js_get_settings_function=null){
 			$ajax_action = $trigger_id.'_ajax_action';
 			?>
@@ -121,6 +155,8 @@ if (!class_exists('SyncAjax')){
 		public static function sync_promotion_ajax_handle() {
 			$ajax_action = SyncAjax::$AJAX_SYNC_PROMOTION_TRIGGER_ID.'_ajax_action';
 			add_action('wp_ajax_'.$ajax_action, function (){
+				update_option(AFFILIATE_PROMOTIONS_PREFIX . 'debug_auto_update', 'ajax');
+				
 				require_once AFFILIATE_PROMOTIONS_DIR . 'includes/apis/AccessTrade_Api.php';
 				$client = new AccessTrade_Api(affpromos_get_options());
 				$client->sync_promotions_with_local();
