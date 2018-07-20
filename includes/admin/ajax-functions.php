@@ -177,6 +177,7 @@ if (!class_exists('SyncAjax')){
 				
 				echo json_encode(array(
 					'type'      =>'success',
+					
 					'message'   =>__('Updated',AFFILIATE_PROMOTIONS_PLUG),
 				));
 				die();

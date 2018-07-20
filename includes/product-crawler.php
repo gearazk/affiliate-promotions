@@ -44,21 +44,16 @@ class ProductCrawler {
 		$_html = str_get_html($response['body']);
 		
 		try{
-			
 			return call_user_func_array(array($this,$parser[$host]) ,array($_html,$url));
-		}catch (Error $e)
-		{
+		}catch (Error $e){
 			return array(
 				'error' => 'The format of this site is unnoticed ! Please wait for new update '
 			);
 		}
-
-		
 	}
 	
 	public function crawl_site_tiki($_html, $url)
 	{
-		
 		$_html = $_html->find('div[class=container]',4);
 		
 		if (empty($_html))

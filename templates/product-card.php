@@ -11,7 +11,6 @@ if(!wp_script_is('product-card.css', 'enqueued')){
 
 $title = affpromos_get_offer_title($post->ID);
 $url = affpromos_get_offer_url($post->ID);
-
 ?>
 
 <div class='product clearfix product-align-<?php echo $align; ?>'>
@@ -44,7 +43,7 @@ $url = affpromos_get_offer_url($post->ID);
 			</a>
 
 			<div class='product-text product-description' itemprop='description'>
-				<?php echo get_the_excerpt($post->ID);?>
+				<?php echo $post->post_excerpt;?>
 			</div>
 		</div>
 	</div>

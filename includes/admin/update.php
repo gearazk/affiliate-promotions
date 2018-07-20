@@ -30,8 +30,6 @@ function init_routine_check($schedule_name){
 	}
 }
 
-
-
 function schedule_full_update() {
 	# Just flip the switch to  true
 	# SyncAjax::ajax_sync_background_render() will do the rest

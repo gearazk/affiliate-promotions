@@ -210,7 +210,7 @@ function aff_add_product_shortcode( $atts, $content = '' ) {
 		return'';
 	}
 	
-	$options = affpromos_get_options();
+//	$options = affpromos_get_options();
 	
 	if (isset($url)){
 		$sql = "SELECT post_id FROM $wpdb->postmeta WHERE ( meta_value LIKE '".$url."');" ;
@@ -228,7 +228,6 @@ function aff_add_product_shortcode( $atts, $content = '' ) {
 			$id = $res['offer_id'];
 		}
 	}
-	
 	$post = get_post($id);
 	
 	ob_start();
